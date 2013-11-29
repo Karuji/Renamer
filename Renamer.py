@@ -1,12 +1,17 @@
+#!/usr/bin/env python3
+"""Program for the bulk renaming of files in an ordered manner."""
+
 import os
 
 class FileName(object):
+    """Class to hold the name of the file to be renamed."""
     string    = "" #not to be changed
     file      = ""
     extention = ""
     newName   = ""
 
     def __init__(self, string):
+        """Allows passing the current file name when creating the object."""
         self.string = string
         pos = 0
         for i in range(1, len(self.string)):
@@ -16,25 +21,31 @@ class FileName(object):
         self.file = self.string[:len(self.string)-pos]
         self.extention = self.string[-pos:]
 
-    def setName(self, name):
+    def setFileName(self, name):
+        """Sets a new file name for the rename function."""
         self.file = name
 
-    def getName(self):
+    def getName(self): 
+        """Returns the current full name of the file."""
         return self.string
 
-    def getFile(self):
+    def getFileName(self): 
+        """Returns the current file name that it shall be renamed to."""
         return self.file
 
-    def getExt(self):
+    def getFileExt(self):
+        """Returns the current file extention."""
         return self.extention
 
     def rename(self):
+        """renames the file from the current name (string) to the new one (file)."""
         self.newName = self.file + self.extention
         os.rename(self.string, self.newName)
         print(self.string + "-->" + self.newName)
             
 
 class Renamer(object):
+    """Takes a directory and renams the files in that directory in an ordered manner."""
     mainList     = []
     subList      = []
     fill         = 0
@@ -44,44 +55,49 @@ class Renamer(object):
     term1, term2 = 0, 0
 
     def printList(self):
+        """Prints the names of the current files in the directoy."""
         i = 1
         for item in self.mainList:
             print(str(i).zfill(self.fill) + ": " + item.getName())
             i += 1
 
     def printSubList(self):
+        """Prints the list of items selected by the select function."""
         for item in self.subList:
             print(item.getName())
 
     def inString(self, string):
+        """Stores the raw input from the command line as a string."""
         self.string = string
 
     def list(self):
         printList()
             
     def swap(self, cmd):
+        """Swaps two items in the list."""
         term1, term2 = eval(cmd[1])-1, eval(cmd[2])-1
         self.mainList[term1], self.mainList[term2] = self.mainList[term2], self.mainList[term1]
         self.sel = False
         self.printList()
 
     def select(self, cmd):
+        """Creates a sublist between the two selected elements (1 indexed all inclusive)."""
         self.term1, self.term2 = eval(cmd[1]), eval(cmd[2])
         self.term1 -= 1
         self.subList = self.mainList[self.term1 : self.term2]
         self.sel = True
         self.printSubList()
 
-    def restart(self):
-        self.mainList = []
-        self.subList = []
-        self.sel = False
-        self.term1, self.term2 = 0, 0
-        for i in range(10):
-            self.mainList.append(i+1)
-        self.printList()
-
     def insert(self, cmd):
+        """Inserts the sublist into the selected place
+           the sublist cannot be inserted into itself
+
+           If the insert position is an element element of the list than the first item of the sublist
+           the first item of the sublist shall be at the insert position
+
+           If the insert position is an element greater than the last item of the sublist
+           the last item of the sublist will be at the insert position."""
+
         if self.sel == True:
             iIn = eval(cmd[1])
             if iIn > self.term1 and iIn <= self.term2:
@@ -105,23 +121,44 @@ class Renamer(object):
         self.printList()
 
     def set(self, cmd):
+        """Allows the user to set the name that the files will be renamed to."""
         if cmd[1] == "name":
             self.toName = self.string[len(cmd[0]) + len(cmd[1]) + 2:]
             self.printList()
 
     def show(self, cmd):
-        if cmd[1] == "ext":
+        """Shows aspects of the program depend on the command entered after show."""
+        if   cmd[1] == "ext":
             i = 1
             for item in self.mainList:
-                print(str(i).zfill(self.fill) + ": " + item.getExt())
+                print(str(i).zfill(self.fill) + ": " + item.getFileExt())
                 i += 1
-        if cmd[1] == "file":
+        elif cmd[1] == "file":
             i = 1
             for item in self.mainList:
-                print(str(i).zfill(self.fill) + ": " + item.getFile())
+                print(str(i).zfill(self.fill) + ": " + item.getFileName())
                 i +=1
+        elif cmd[1] == "w":
+            print("""This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    """)
+        elif cmd[1] == "c":
+            print("""Renamer is a program for the bulk renaming of files.
+    Copyright (C) 2013  Julian Prithard
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    """)
 
     def dir(self):
+        """An attempted to replicate the command line dir function for navigation."""
         print(os.getcwd())
         print()
         dirList = os.listdir(os.getcwd())
@@ -129,6 +166,7 @@ class Renamer(object):
             print(i)
 
     def cd(self, cmd):
+        """An attempted to replicate the command line cd function for navigation."""
         inDir = False
         dirList = os.listdir(os.getcwd())
         for i in dirList:
@@ -150,6 +188,7 @@ class Renamer(object):
                 print(newPath + " is not a correct directory: err#4")
 
     def sort(self):
+        """Used to set the current directory to that in which the files shall be renamed."""
         dirList = os.listdir(os.getcwd())
         for i in dirList:
             if os.path.isfile(i):
@@ -163,18 +202,21 @@ class Renamer(object):
             i += 1
 
     def remove(self, cmd):
+        """Removes an element from the list."""
         self.mainList.pop(eval(cmd[1])-1)
         self.printList()
 
     def rename(self):
+        """Renames the files in the list to their new name."""
         i = 1
         for item in self.mainList:
-            item.setName(self.toName + str(i).zfill(self.fill))
+            item.setFileName(self.toName + str(i).zfill(self.fill))
             item.rename()
             i += 1
         self.printList()
 
     def help(self, cmd):
+        """Shows help depending on what the user enters."""
         if len(cmd) == 1:
             print("This is the help function")
             print("For help on a specific function please type help follow by the function")
@@ -254,7 +296,8 @@ class Renamer(object):
                 print()
 
 
-    def processInput(self, cmd): 
+    def processInput(self, cmd):
+        """Takes a list of the command input split by spaces and calls functions according to the input.""" 
         if cmd[0]   == "swt" or cmd[0] == "swp" or cmd[0] == "swap":
             self.swap(cmd)
         elif cmd[0] == "sel" or cmd[0] == "select":
@@ -284,6 +327,11 @@ class Renamer(object):
         
 def main():
     renamer = Renamer()
+    print("""Renamer  Copyright (C) 2013  Julian Pritchard
+    This program comes with ABSOLUTELY NO WARRANTY; for details type 'show w'.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions; type 'show c' for details.""")
+    print()
     print("Type help functions for a list of commands")
     while True:
             var = input("Enter a Command: ")
