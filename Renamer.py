@@ -9,17 +9,22 @@ class FileName(object):
     file      = ""
     extention = ""
     newName   = ""
+    hasExt    = False
 
     def __init__(self, string):
         """Allows passing the current file name when creating the object."""
         self.string = string
         pos = 0
-        for i in range(1, len(self.string)):
-            if self.string[-i] == ".":
-                pos = i
-                break
-        self.file = self.string[:len(self.string)-pos]
-        self.extention = self.string[-pos:]
+
+        if '.' in self.string:
+            for i in range(1, len(self.string)):
+                if self.string[-i] == ".":
+                    pos = i
+                    break
+            self.file = self.string[:len(self.string)-pos]
+            self.extention = self.string[-pos:]
+        else:
+            self.file = self.string
 
     def setFileName(self, name):
         """Sets a new file name for the rename function."""
@@ -28,6 +33,10 @@ class FileName(object):
     def getName(self): 
         """Returns the current full name of the file."""
         return self.string
+
+    def setName(self, string):
+        """Sets the member string var."""
+        self.string = string
 
     def getFileName(self): 
         """Returns the current file name that it shall be renamed to."""
@@ -53,6 +62,7 @@ class Renamer(object):
     string       = ""
     sel          = False
     term1, term2 = 0, 0
+    canRename    = False
 
     def printList(self):
         """Prints the names of the current files in the directoy."""
@@ -60,6 +70,7 @@ class Renamer(object):
         for item in self.mainList:
             print(str(i).zfill(self.fill) + ": " + item.getName())
             i += 1
+        print()
 
     def printSubList(self):
         """Prints the list of items selected by the select function."""
@@ -71,7 +82,7 @@ class Renamer(object):
         self.string = string
 
     def list(self):
-        printList()
+        self.printList()
             
     def swap(self, cmd):
         """Swaps two items in the list."""
@@ -200,6 +211,7 @@ class Renamer(object):
         for item in self.mainList:
             print(str(i).zfill(self.fill) + ": " + item.getName())
             i += 1
+        self.canRename = True
 
     def remove(self, cmd):
         """Removes an element from the list."""
@@ -208,12 +220,16 @@ class Renamer(object):
 
     def rename(self):
         """Renames the files in the list to their new name."""
-        i = 1
-        for item in self.mainList:
-            item.setFileName(self.toName + str(i).zfill(self.fill))
-            item.rename()
-            i += 1
-        self.printList()
+        if self.canRename:
+            i = 1
+            for item in self.mainList:
+                item.setFileName(self.toName + str(i).zfill(self.fill))
+                item.rename()
+                i += 1
+            self.printList()
+            self.canRename = False
+        else:
+            print('No files have been selected be to renamed. Use sort before rename.')
 
     def help(self, cmd):
         """Shows help depending on what the user enters."""
