@@ -59,6 +59,7 @@ class Renamer(object):
     mainList     = []
     subList      = []
     fill         = 0
+    startNum     = 1
     toName       = ""
     string       = ""
     sel          = False
@@ -126,6 +127,11 @@ class Renamer(object):
                 self.printList()
                 self.sel = False
                 
+        # elif len(cmd) == 3:
+        #     if eval(cmd[1]) != eval(cmd[2]):
+        #         self.select(["sel", cmd[1], cmd[1]])
+        #         self.insert(["ins", cmd[2]])
+
         else:
             print("Nothing is selects to insert")
 
@@ -133,10 +139,41 @@ class Renamer(object):
         self.printList()
 
     def set(self, cmd):
-        """Allows the user to set the name that the files will be renamed to."""
+        """Input commands that determine how renamer will function"""
         if cmd[1] == "name":
-            self.toName = self.string[len(cmd[0]) + len(cmd[1]) + 2:]
-            self.printList()
+           self.setName(cmd)
+        if cmd[1] == "start":
+            self.setStart(cmd)
+
+    def setName(self, cmd):
+        """Allows the user to set the name that the files will be renamed to."""
+        self.toName = self.string[len(cmd[0]) + len(cmd[1]) + 2:]
+        self.printList()
+        print()
+        print("New name set to: " + self.toName)
+        print("Example: " + self.toName + str(1).zfill(self.fill))
+        print()
+
+    def setStart(self, cmd):
+        """Sets the starting number from which the files will be renamed"""
+        self.startNum = eval(cmd[2])
+        self.checkZFill()
+        print()
+        print("New starting number is " + str(self.startNum))
+        print("zfill is " + str(self.fill))
+
+    def checkZFill(self):
+        """Check the zfill so that it is correct when a new start number has been added"""
+        fill    = self.fill
+        newFill = fill        
+
+        if len(str(self.startNum)) > fill:
+            newFill = len(str(self.startNum))
+
+        if (len(self.mainList) + self.startNum) > 10**(newFill):
+            newFill += 1
+
+        self.fill = newFill
 
     def show(self, cmd):
         """Shows aspects of the program depend on the command entered after show."""
@@ -214,7 +251,7 @@ class Renamer(object):
             i += 1
         self.canRename = True
 
-    def remove(self, cmd):
+    def remove(self, cmd): #Need to update for removing a range.
         """Removes an element from the list."""
         self.mainList.pop(eval(cmd[1])-1)
         self.printList()
@@ -222,7 +259,7 @@ class Renamer(object):
     def rename(self):
         """Renames the files in the list to their new name."""
         if self.canRename:
-            i = 1
+            i = self.startNum
             for item in self.mainList:
                 item.setFileName(self.toName + str(i).zfill(self.fill))
                 item.rename()
