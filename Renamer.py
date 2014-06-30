@@ -238,6 +238,7 @@ class Renamer(object):
 
     def sort(self):
         """Used to set the current directory to that in which the files shall be renamed."""
+        mainList = []
         dirList = os.listdir(os.getcwd())
         for i in dirList:
             if os.path.isfile(i):
@@ -251,10 +252,15 @@ class Renamer(object):
             i += 1
         self.canRename = True
 
-    def remove(self, cmd): #Need to update for removing a range.
+    def remove(self, cmd):
         """Removes an element from the list."""
-        self.mainList.pop(eval(cmd[1])-1)
-        self.printList()
+        if len(cmd) == 2:
+            self.mainList.pop(eval(cmd[1])-1)
+            self.printList()
+        elif len(cmd) == 3:
+            list1 = self.mainList[0:eval(cmd[1])-1]
+            list2 = self.mainList[eval(cmd[2]):len(self.mainList)]
+            self.mainList = list1 + list2
 
     def rename(self):
         """Renames the files in the list to their new name."""
