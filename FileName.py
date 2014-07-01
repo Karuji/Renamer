@@ -1,5 +1,3 @@
-import os
-
 class FileName(object):
     """Class to hold the name of the file to be renamed."""
     string    = "" #not to be changed
@@ -42,9 +40,3 @@ class FileName(object):
     def getFileExt(self):
         """Returns the current file extention."""
         return self.extention
-
-    def rename(self):
-        """renames the file from the current name (string) to the new one (file)."""
-        self.newName = self.file + self.extention
-        os.rename(self.string, self.newName)
-        print(self.string + "-->" + self.newName)

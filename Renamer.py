@@ -47,11 +47,25 @@ from FileName import *
 #         """Returns the current file extention."""
 #         return self.extention
 
-#     def rename(self):
-#         """renames the file from the current name (string) to the new one (file)."""
-#         self.newName = self.file + self.extention
-#         os.rename(self.string, self.newName)
-#         print(self.string + "-->" + self.newName)
+
+class RenamerFile(FileName):
+
+    def __init__(self, string):
+        super().__init__(string)
+        self.tempName = ""
+        self.oldName  = string
+
+    def rename(self):
+        """Renames the file from the current name (string) to the new one (file)."""
+        self.newName = self.file + self.extention
+        os.rename(self.string, self.newName)
+        #print(self.string + "-->" + self.newName)
+
+    def renamePrint(self):
+        """Functions like rename but prints the change from original filename to new."""
+        self.newName = self.file + self.extention
+        os.rename(self.string, self.newName)
+        print(self.oldName + " --> " + self.newName)
             
 
 class Renamer(object):
@@ -95,6 +109,7 @@ class Renamer(object):
 
     def select(self, cmd):
         """Creates a sublist between the two selected elements (1 indexed all inclusive)."""
+        self.subList = []
         self.term1, self.term2 = eval(cmd[1]), eval(cmd[2])
         self.term1 -= 1
         self.subList = self.mainList[self.term1 : self.term2]
@@ -120,17 +135,17 @@ class Renamer(object):
                 for j in range(len(self.subList)):
                     self.mainList.insert(iIn-1+j, self.subList[j])
                 self.printList()
-            elif iIn > self.term2:
-                self.mainList[self.term1 : self.term2] = []
-                for j in range(len(self.subList)):
-                    self.mainList.insert(iIn-len(self.subList)+j+1, self.subList[j])
-                self.printList()
                 self.sel = False
-                
-        # elif len(cmd) == 3:
-        #     if eval(cmd[1]) != eval(cmd[2]):
-        #         self.select(["sel", cmd[1], cmd[1]])
-        #         self.insert(["ins", cmd[2]])
+            elif iIn > self.term2:
+                self.mainList[self.term1 : self.term2] = []                          #Need to fix the logic
+                for j in range(len(self.subList)):                                   #with this
+                    self.mainList.insert(iIn-len(self.subList)+j+1, self.subList[j]) #ins needs to go on the
+                self.printList()                                                     #term not after.
+                self.sel = False                
+        elif len(cmd) == 3:
+            if eval(cmd[1]) != eval(cmd[2]):
+                self.select(["sel", cmd[1], cmd[1]])
+                self.insert(["ins", cmd[2]])
 
         else:
             print("Nothing is selects to insert")
@@ -161,6 +176,7 @@ class Renamer(object):
         print()
         print("New starting number is " + str(self.startNum))
         print("zfill is " + str(self.fill))
+        print("Example: " + self.toName + str(1).zfill(self.fill))
 
     def checkZFill(self):
         """Check the zfill so that it is correct when a new start number has been added"""
@@ -242,7 +258,7 @@ class Renamer(object):
         dirList = os.listdir(os.getcwd())
         for i in dirList:
             if os.path.isfile(i):
-                fileName = FileName(i)
+                fileName = RenamerFile(i)
                 self.mainList.append(fileName)
         
         self.fill = len(str(len(self.mainList)))
@@ -253,24 +269,32 @@ class Renamer(object):
         self.canRename = True
 
     def remove(self, cmd):
-        """Removes an element from the list."""
+        """
+        If a single number is passed then that number is removed from the list
+        If two numbers are passed than the range of those numbers is removed from the list
+        """
         if len(cmd) == 2:
             self.mainList.pop(eval(cmd[1])-1)
             self.printList()
         elif len(cmd) == 3:
-            list1 = self.mainList[0:eval(cmd[1])-1]
-            list2 = self.mainList[eval(cmd[2]):len(self.mainList)]
-            self.mainList = list1 + list2
+            if eval(cmd[1]) < eval(cmd[2]):
+                list1 = self.mainList[0:eval(cmd[1])-1]
+                list2 = self.mainList[eval(cmd[2]):len(self.mainList)]
+                self.mainList = list1 + list2
+                self.printList()
+            else:
+                print("Number range for removal is incorrect err#5")
 
     def rename(self):
         """Renames the files in the list to their new name."""
+        #Need to update to deal with naming conflicts.
         if self.canRename:
             i = self.startNum
             for item in self.mainList:
                 item.setFileName(self.toName + str(i).zfill(self.fill))
-                item.rename()
+                item.renamePrint()
                 i += 1
-            self.printList()
+            #self.printList()
             self.canRename = False
         else:
             print('No files have been selected be to renamed. Use sort before rename.')
