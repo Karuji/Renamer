@@ -79,6 +79,7 @@ class Renamer(object):
     sel          = False
     term1, term2 = 0, 0
     canRename    = False
+    prefixMode   = False #Need to change rename modes to a class
 
     def printList(self):
         """Prints the names of the current files in the directoy."""
@@ -92,6 +93,7 @@ class Renamer(object):
         """Prints the list of items selected by the select function."""
         for item in self.subList:
             print(item.getName())
+        print()
 
     def inString(self, string):
         """Stores the raw input from the command line as a string."""
@@ -137,12 +139,12 @@ class Renamer(object):
                 self.printList()
                 self.sel = False
             elif iIn > self.term2:
-                self.mainList[self.term1 : self.term2] = []                          #Need to fix the logic
-                for j in range(len(self.subList)):                                   #with this
-                    self.mainList.insert(iIn-len(self.subList)+j+1, self.subList[j]) #ins needs to go on the
-                self.printList()                                                     #term not after.
+                self.mainList[self.term1 : self.term2] = []
+                for j in range(len(self.subList)):
+                    self.mainList.insert(iIn-len(self.subList)+j, self.subList[j])
+                self.printList()
                 self.sel = False                
-        elif len(cmd) == 3:
+        elif len(cmd) == 3: #Insersts first term into second one so user does not need to use sel
             if eval(cmd[1]) != eval(cmd[2]):
                 self.select(["sel", cmd[1], cmd[1]])
                 self.insert(["ins", cmd[2]])
@@ -159,6 +161,8 @@ class Renamer(object):
            self.setName(cmd)
         if cmd[1] == "start":
             self.setStart(cmd)
+        if cmd[1] == "mode":
+            self.setMode(cmd)
 
     def setName(self, cmd):
         """Allows the user to set the name that the files will be renamed to."""
@@ -190,6 +194,17 @@ class Renamer(object):
             newFill += 1
 
         self.fill = newFill
+
+    def setMode(self, cmd):
+        if cmd[2] == "prefix":
+            self.setModePrefix()
+
+    def setModePrefix(self):
+        self.prefixMode = not self.prefixMode
+        print()
+        print("Renamer will now append a number to the file name instead of renaming files")
+        print()
+
 
     def show(self, cmd):
         """Shows aspects of the program depend on the command entered after show."""
@@ -290,12 +305,19 @@ class Renamer(object):
         #Need to update to deal with naming conflicts.
         if self.canRename:
             i = self.startNum
-            for item in self.mainList:
-                item.setFileName(self.toName + str(i).zfill(self.fill))
-                item.renamePrint()
-                i += 1
-            #self.printList()
+            if not self.prefixMode:
+                for item in self.mainList:
+                    item.setFileName(self.toName + str(i).zfill(self.fill))
+                    item.renamePrint()
+                    i += 1
+                #self.printList()
+            else:
+                for item in self.mainList:
+                    item.setFileName(str(i).zfill(self.fill) + ' ' + item.getFileName())
+                    item.renamePrint()
+                    i += 1
             self.canRename = False
+
         else:
             print('No files have been selected be to renamed. Use sort before rename.')
 
