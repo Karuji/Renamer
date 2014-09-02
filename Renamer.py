@@ -4,56 +4,13 @@
 import os
 from FileName import *
 
-# class FileName(object):
-#     """Class to hold the name of the file to be renamed."""
-#     string    = "" #not to be changed
-#     file      = ""
-#     extention = ""
-#     newName   = ""
-#     hasExt    = False
-
-#     def __init__(self, string):
-#         """Allows passing the current file name when creating the object."""
-#         self.string = string
-#         pos = 0
-
-#         if '.' in self.string:
-#             for i in range(1, len(self.string)):
-#                 if self.string[-i] == ".":
-#                     pos = i
-#                     break
-#             self.file = self.string[:len(self.string)-pos]
-#             self.extention = self.string[-pos:]
-#         else:
-#             self.file = self.string
-
-#     def setFileName(self, name):
-#         """Sets a new file name for the rename function."""
-#         self.file = name
-
-#     def getName(self): 
-#         """Returns the current full name of the file."""
-#         return self.string
-
-#     def setName(self, string):
-#         """Sets the member string var."""
-#         self.string = string
-
-#     def getFileName(self): 
-#         """Returns the current file name that it shall be renamed to."""
-#         return self.file
-
-#     def getFileExt(self):
-#         """Returns the current file extention."""
-#         return self.extention
-
-
 class RenamerFile(FileName):
 
-    def __init__(self, string):
+    def __init__(self, string, renamer):
         super().__init__(string)
         self.tempName = ""
         self.oldName  = string
+        self.renamer = renamer
 
     def rename(self):
         """Renames the file from the current name (string) to the new one (file)."""
@@ -64,8 +21,18 @@ class RenamerFile(FileName):
     def renamePrint(self):
         """Functions like rename but prints the change from original filename to new."""
         self.newName = self.file + self.extention
-        os.rename(self.string, self.newName)
-        print(self.oldName + " --> " + self.newName)
+        try:
+            os.rename(self.string, self.newName)
+            print(self.oldName + " --> " + self.newName)
+        except FileExistsError:
+            raise
+
+class SplitString(object):
+    """Class to place numbers at an arbitrary place in an arbitrary string"""
+    initialString = ""
+    numberPos     = -1
+    
+        
             
 
 class Renamer(object):
@@ -273,7 +240,7 @@ class Renamer(object):
         dirList = os.listdir(os.getcwd())
         for i in dirList:
             if os.path.isfile(i):
-                fileName = RenamerFile(i)
+                fileName = RenamerFile(i, self)
                 self.mainList.append(fileName)
         
         self.fill = len(str(len(self.mainList)))
@@ -309,12 +276,16 @@ class Renamer(object):
                 for item in self.mainList:
                     item.setFileName(self.toName + str(i).zfill(self.fill))
                     item.renamePrint()
+                    # except FileExistsError:
+                    #     print("Catching exception here")
                     i += 1
                 #self.printList()
             else:
                 for item in self.mainList:
                     item.setFileName(str(i).zfill(self.fill) + ' ' + item.getFileName())
                     item.renamePrint()
+                    # except FileExistsError:
+                    #     print("Catching exception here")
                     i += 1
             self.canRename = False
 
