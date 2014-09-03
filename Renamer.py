@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-"""
-Program for the bulk renaming of files in an ordered manner.
-"""
+"""Program for the bulk renaming of files in an ordered manner."""
 
 import os
 from FileName import *
-from RenamerHelp import *
+import RenamerHelp
 
 class RenamerFile(FileName):
 
@@ -16,17 +14,13 @@ class RenamerFile(FileName):
         self.renamer = renamer
 
     def rename(self):
-        """
-        Renames the file from the current name (string) to the new one (file).
-        """
+        """Renames the file from the current name (string) to the new one (file)."""
         self.newName = self.file + self.extention
         os.rename(self.string, self.newName)
         #print(self.string + "-->" + self.newName)
 
     def renamePrint(self):
-        """
-        Functions like rename but prints the change from original filename to new.
-        """
+        """Functions like rename but prints the change from original filename to new."""
         self.newName = self.file + self.extention
         try:
             os.rename(self.string, self.newName)
@@ -35,17 +29,13 @@ class RenamerFile(FileName):
             raise
 
 class SplitString(object):
-    """
-    Class to place numbers at an arbitrary place in an arbitrary string.
-    """
+    """Class to place numbers at an arbitrary place in an arbitrary string."""
     initialString = ""
     numberPos     = -1 
         
             
 class Renamer(object):
-    """
-    Takes a directory and renams the files in that directory in an ordered manner.
-    """
+    """Takes a directory and renams the files in that directory in an ordered manner."""
     mainList     = []
     subList      = []
     fill         = 0
@@ -58,9 +48,7 @@ class Renamer(object):
     prefixMode   = False #Need to change rename modes to a class
 
     def printList(self):
-        """
-        Prints the names of the current files in the directoy.
-        """
+        """Prints the names of the current files in the directoy."""
         i = 1
         for item in self.mainList:
             print(str(i).zfill(self.fill) + ": " + item.getName())
@@ -68,35 +56,27 @@ class Renamer(object):
         print()
 
     def printSubList(self):
-        """
-        Prints the list of items selected by the select function.
-        """
+        """Prints the list of items selected by the select function."""
         for item in self.subList:
             print(item.getName())
         print()
 
     def inString(self, string):
-        """
-        Stores the raw input from the command line as a string.
-        """
+        """Stores the raw input from the command line as a string."""
         self.string = string
 
     def list(self):
         self.printList()
             
     def swap(self, cmd):
-        """
-        Swaps two items in the list.
-        """
+        """Swaps two items in the list."""
         term1, term2 = eval(cmd[1])-1, eval(cmd[2])-1
         self.mainList[term1], self.mainList[term2] = self.mainList[term2], self.mainList[term1]
         self.sel = False
         self.printList()
 
     def select(self, cmd):
-        """
-        Creates a sublist between the two selected elements (1 indexed all inclusive).
-        """
+        """Creates a sublist between the two selected elements (1 indexed all inclusive)."""
         self.subList = []
         self.term1, self.term2 = eval(cmd[1]), eval(cmd[2])
         self.term1 -= 1
@@ -105,16 +85,14 @@ class Renamer(object):
         self.printSubList()
 
     def insert(self, cmd):
-        """
-        Inserts the sublist into the selected place
-        the sublist cannot be inserted into itself
+        """Inserts the sublist into the selected place
+the sublist cannot be inserted into itself
 
-        If the insert position is an element element of the list than the first item of the sublist
-       the first item of the sublist shall be at the insert position
+If the insert position is an element element of the list than the first item of the sublist
+the first item of the sublist shall be at the insert position
 
-       If the insert position is an element greater than the last item of the sublist
-       the last item of the sublist will be at the insert position.
-       """
+If the insert position is an element greater than the last item of the sublist
+the last item of the sublist will be at the insert position."""
 
         if self.sel == True:
             iIn = eval(cmd[1])
@@ -144,9 +122,7 @@ class Renamer(object):
         self.printList()
 
     def set(self, cmd):
-        """
-        Input commands that determine how renamer will function.
-        """
+        """Input commands that determine how renamer will function."""
         if cmd[1] == "name":
            self.setName(cmd)
         if cmd[1] == "start":
@@ -155,9 +131,7 @@ class Renamer(object):
             self.setMode(cmd)
 
     def setName(self, cmd):
-        """
-        Allows the user to set the name that the files will be renamed to.
-        """
+        """Allows the user to set the name that the files will be renamed to."""
         self.toName = self.string[len(cmd[0]) + len(cmd[1]) + 2:]
         self.printList()
         print()
@@ -166,9 +140,7 @@ class Renamer(object):
         print()
 
     def setStart(self, cmd):
-        """
-        Sets the starting number from which the files will be renamed.
-        """
+        """Sets the starting number from which the files will be renamed."""
         self.startNum = eval(cmd[2])
         self.checkZFill()
         print()
@@ -177,9 +149,7 @@ class Renamer(object):
         print("Example: " + self.toName + str(1).zfill(self.fill))
 
     def checkZFill(self):
-        """
-        Check the zfill so that it is correct when a new start number has been added.
-        """
+        """Check the zfill so that it is correct when a new start number has been added."""
         fill    = self.fill
         newFill = fill        
 
@@ -203,9 +173,7 @@ class Renamer(object):
 
 
     def show(self, cmd):
-        """
-        Shows aspects of the program depend on the command entered after show.
-        """
+        """Shows aspects of the program depend on the command entered after show."""
         if   cmd[1] == "ext":
             i = 1
             for item in self.mainList:
@@ -217,44 +185,10 @@ class Renamer(object):
                 print(str(i).zfill(self.fill) + ": " + item.getFileName())
                 i +=1
 
-    def dir(self):
-        """
-        An attempted to replicate the command line dir function for navigation.
-        """
-        print(os.getcwd())
-        print()
-        dirList = os.listdir(os.getcwd())
-        for i in dirList:
-            print(i)
-
-    def cd(self, cmd):
-        """
-        An attempted to replicate the command line cd function for navigation.
-        """
-        inDir = False
-        dirList = os.listdir(os.getcwd())
-        for i in dirList:
-            if i == cmd[1]:
-                inDir = True
-        if inDir:
-            newPath = os.path.join(os.getcwd(), os.sep, cmd[1])
-            if os.path.isdir(newPath):
-                os.chdir(newPath)
-                print(os.getcwd())
-            else:
-                print(newPath + " is not a correct directory: err#3")
-        else:
-            newPath = self.string[(len(cmd[0]))+1:]
-            if os.path.isdir(newPath):
-                os.chdir(newPath)
-                print(os.getcwd())
-            else:
-                print(newPath + " is not a correct directory: err#4")
+    
 
     def sort(self):
-        """
-        Used to set the current directory to that in which the files shall be renamed.
-        """
+        """Used to set the current directory to that in which the files shall be renamed."""
         mainList = []
         dirList = os.listdir(os.getcwd())
         for i in dirList:
@@ -270,10 +204,8 @@ class Renamer(object):
         self.canRename = True
 
     def remove(self, cmd):
-        """
-        If a single number is passed then that number is removed from the list
-        If two numbers are passed than the range of those numbers is removed from the list
-        """
+        """If a single number is passed then that number is removed from the list
+        If two numbers are passed than the range of those numbers is removed from the list"""
         if len(cmd) == 2:
             self.mainList.pop(eval(cmd[1])-1)
             self.printList()
@@ -287,9 +219,7 @@ class Renamer(object):
                 print("Number range for removal is incorrect err#5")
 
     def rename(self):
-        """
-        Renames the files in the list to their new name.
-        """
+        """Renames the files in the list to their new name."""
         #Need to update to deal with naming conflicts.
         if self.canRename:
             i = self.startNum
@@ -314,17 +244,42 @@ class Renamer(object):
             print('No files have been selected be to renamed. Use sort before rename.')
 
     def help(self, cmd):
-        """
-        Shows help depending on what the user enters.
-        """
-        rHelp = RenamerHelp()
-        rHelp.help(cmd)
-       
+        """Shows help depending on what the user enters."""
+        RenamerHelp.help(cmd)
+
+    def dir(self):
+        """An attempted to replicate the command line dir function for navigation."""
+        print(os.getcwd())
+        print()
+        dirList = os.listdir(os.getcwd())
+        for i in dirList:
+            print(i)
+
+    def cd(self, cmd):
+        """An attempted to replicate the command line cd function for navigation."""
+        inDir = False
+        dirList = os.listdir(os.getcwd())
+        for i in dirList:
+            if i == cmd[1]:
+                inDir = True
+        if inDir:
+            newPath = os.path.join(os.getcwd(), os.sep, cmd[1])
+            if os.path.isdir(newPath):
+                os.chdir(newPath)
+                print(os.getcwd())
+            else:
+                print(newPath + " is not a correct directory: err#3")
+        else:
+            newPath = self.string[(len(cmd[0]))+1:]
+            if os.path.isdir(newPath):
+                os.chdir(newPath)
+                print(os.getcwd())
+            else:
+                print(newPath + " is not a correct directory: err#4")
+           
 
     def processInput(self, cmd):
-        """
-        Takes a list of the command input split by spaces and calls functions according to the input.
-        """ 
+        """Takes a list of the command input split by spaces and calls functions according to the input.""" 
         if cmd[0]   == "swt" or cmd[0] == "swp" or cmd[0] == "swap":
             self.swap(cmd)
         elif cmd[0] == "sel" or cmd[0] == "select":
