@@ -44,7 +44,6 @@ class Renamer(object):
     string       = ""
     sel          = False
     term1, term2 = 0, 0
-    canRename    = False
     prefixMode   = False #Need to change rename modes to a class
 
     def printList(self):
@@ -189,7 +188,7 @@ the last item of the sublist will be at the insert position."""
 
     def sort(self):
         """Used to set the current directory to that in which the files shall be renamed."""
-        mainList = []
+        self.mainList = []
         dirList = os.listdir(os.getcwd())
         for i in dirList:
             if os.path.isfile(i):
@@ -201,7 +200,6 @@ the last item of the sublist will be at the insert position."""
         for item in self.mainList:
             print(str(i).zfill(self.fill) + ": " + item.getName())
             i += 1
-        self.canRename = True
 
     def remove(self, cmd):
         """If a single number is passed then that number is removed from the list
@@ -221,7 +219,7 @@ the last item of the sublist will be at the insert position."""
     def rename(self):
         """Renames the files in the list to their new name."""
         #Need to update to deal with naming conflicts.
-        if self.canRename:
+        if len(self.mainList) > 0:
             i = self.startNum
             if not self.prefixMode:
                 for item in self.mainList:
@@ -238,7 +236,7 @@ the last item of the sublist will be at the insert position."""
                     # except FileExistsError:
                     #     print("Catching exception here")
                     i += 1
-            self.canRename = False
+            self.mainList = []
 
         else:
             print('No files have been selected be to renamed. Use sort before rename.')
