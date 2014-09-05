@@ -4,6 +4,7 @@
 import os
 from FileName import *
 import RenamerHelp
+import splitstring
 
 class RenamerFile(FileName):
 
@@ -28,11 +29,9 @@ class RenamerFile(FileName):
         except FileExistsError:
             raise
 
-class SplitString(object):
-    """Class to place numbers at an arbitrary place in an arbitrary string."""
-    initialString = ""
-    numberPos     = -1 
-        
+    def setFileName(self, name, num):
+        self.file = splitstring.stitch(name, self.file, num)
+
             
 class Renamer(object):
     """Takes a directory and renams the files in that directory in an ordered manner."""
@@ -44,7 +43,6 @@ class Renamer(object):
     string       = ""
     sel          = False
     term1, term2 = 0, 0
-    prefixMode   = False #Need to change rename modes to a class
 
     def printList(self):
         """Prints the names of the current files in the directoy."""
@@ -131,6 +129,7 @@ the last item of the sublist will be at the insert position."""
 
     def setName(self, cmd):
         """Allows the user to set the name that the files will be renamed to."""
+
         self.toName = self.string[len(cmd[0]) + len(cmd[1]) + 2:]
         self.printList()
         print()
@@ -161,15 +160,8 @@ the last item of the sublist will be at the insert position."""
         self.fill = newFill
 
     def setMode(self, cmd):
-        if cmd[2] == "prefix":
-            self.setModePrefix()
-
-    def setModePrefix(self):
-        self.prefixMode = not self.prefixMode
-        print()
-        print("Renamer will now append a number to the file name instead of renaming files")
-        print()
-
+        #Legacy from when prefix was a command
+        pass
 
     def show(self, cmd):
         """Shows aspects of the program depend on the command entered after show."""
@@ -183,7 +175,6 @@ the last item of the sublist will be at the insert position."""
             for item in self.mainList:
                 print(str(i).zfill(self.fill) + ": " + item.getFileName())
                 i +=1
-
     
 
     def sort(self):
@@ -221,21 +212,13 @@ the last item of the sublist will be at the insert position."""
         #Need to update to deal with naming conflicts.
         if len(self.mainList) > 0:
             i = self.startNum
-            if not self.prefixMode:
-                for item in self.mainList:
-                    item.setFileName(self.toName + str(i).zfill(self.fill))
-                    item.renamePrint()
-                    # except FileExistsError:
-                    #     print("Catching exception here")
-                    i += 1
+            for item in self.mainList:
+                item.setFileName(self.toName, str(i).zfill(self.fill))
+                item.renamePrint()
+                # except FileExistsError:
+                #     print("Catching exception here")
+                i += 1
                 #self.printList()
-            else:
-                for item in self.mainList:
-                    item.setFileName(str(i).zfill(self.fill) + ' ' + item.getFileName())
-                    item.renamePrint()
-                    # except FileExistsError:
-                    #     print("Catching exception here")
-                    i += 1
             self.mainList = []
 
         else:
