@@ -6,10 +6,10 @@ def stitch(toName, oldName, num):
 
     if posNum < posName:
         first, second = posNum, posName
-        posNum = 0
+        find = 0
     else:
         first, second = posName, posNum
-        posNum = 1
+        find = 1
 
     if first == -1:
         first = 0
@@ -23,17 +23,17 @@ def stitch(toName, oldName, num):
     parts.append(toName[second+1:])
 
     if posName != -1:
-        if posNum == 0:
+        if find == 0:
             parts[3] = oldName
         else:
             parts[1] = oldName
     else:
-        if posNum == 0:
+        if find == 0:
             parts[3] = ''
         else:
             parts[1] = ''
 
-    if posNum == 0:
+    if find == 0:
         parts[1] = num
     else:
         parts[3] = num
@@ -42,5 +42,8 @@ def stitch(toName, oldName, num):
 
     for part in parts:
         string += part
+
+    if posNum == -1:
+        string += num
 
     return string
