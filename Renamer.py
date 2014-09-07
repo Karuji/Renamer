@@ -11,7 +11,7 @@ class RenamerFile(FileName):
     def __init__(self, string, renamer):
         super().__init__(string)
         self.tempName = ""
-        self.oldName  = string
+        self._oldName  = string
         self.renamer = renamer
 
     def rename(self):
@@ -25,7 +25,7 @@ class RenamerFile(FileName):
         self.newName = self.file + self.extention
         try:
             os.rename(self.string, self.newName)
-            print(self.oldName + " --> " + self.newName)
+            print(self._oldName + " --> " + self.newName)
         except FileExistsError:
             raise
 
@@ -129,24 +129,29 @@ the last item of the sublist will be at the insert position."""
 
     def setName(self, cmd):
         """Allows the user to set the name that the files will be renamed to."""
-
-        self.toName = self.string[len(cmd[0]) + len(cmd[1]) + 2:]
-        self.printList()
-        print()
-        print("New name set to: " + self.toName)
-        print("Example: " + self.toName + str(1).zfill(self.fill))
-        print()
+        if len(self.mainList) > 0:
+            self.toName = self.string[len(cmd[0]) + len(cmd[1]) + 2:]
+            self.printList()
+            print()
+            print("New name set to: " + self.toName)
+            print("Example: " + splitstring.stitch(self.toName, self.mainList[0].file, str(self.startNum).zfill(self.fill)))
+            print()
+        else:
+            print("Must have a sorted list before setting name")
 
     def setStart(self, cmd):
         """Sets the starting number from which the files will be renamed."""
-        self.startNum = eval(cmd[2])
-        self.checkZFill()
-        print()
-        print("New starting number is " + str(self.startNum))
-        print("zfill is " + str(self.fill))
-        print("Example: " + self.toName + str(1).zfill(self.fill))
+        if len(self.mainList) > 0:
+            self.startNum = eval(cmd[2])
+            self._checkZFill()
+            print()
+            print("New starting number is " + str(self.startNum))
+            print("zfill is " + str(self.fill))
+            print("Example: " + splitstring.stitch(self.toName, self.mainList[0].file, str(self.startNum).zfill(self.fill)))
+        else:
+            print("Must have a sorted list before setting the start num")
 
-    def checkZFill(self):
+    def _checkZFill(self):
         """Check the zfill so that it is correct when a new start number has been added."""
         fill    = self.fill
         newFill = fill        
