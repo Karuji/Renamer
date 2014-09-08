@@ -5,6 +5,7 @@ import os
 from FileName import *
 import RenamerHelp
 import splitstring
+import osnav
 
 class RenamerFile(FileName):
 
@@ -235,33 +236,11 @@ the last item of the sublist will be at the insert position."""
 
     def dir(self):
         """An attempted to replicate the command line dir function for navigation."""
-        print(os.getcwd())
-        print()
-        dirList = os.listdir(os.getcwd())
-        for i in dirList:
-            print(i)
+        osnav.dir()
 
     def cd(self, cmd):
         """An attempted to replicate the command line cd function for navigation."""
-        inDir = False
-        dirList = os.listdir(os.getcwd())
-        for i in dirList:
-            if i == cmd[1]:
-                inDir = True
-        if inDir:
-            newPath = os.path.join(os.getcwd(), os.sep, cmd[1])
-            if os.path.isdir(newPath):
-                os.chdir(newPath)
-                print(os.getcwd())
-            else:
-                print(newPath + " is not a correct directory: err#3")
-        else:
-            newPath = self.string[(len(cmd[0]))+1:]
-            if os.path.isdir(newPath):
-                os.chdir(newPath)
-                print(os.getcwd())
-            else:
-                print(newPath + " is not a correct directory: err#4")
+        osnav.cd(self.string)
            
 
     def processInput(self, cmd):
