@@ -62,9 +62,6 @@ class Renamer(object):
     def inString(self, string):
         """Stores the raw input from the command line as a string."""
         self.string = string
-
-    def list(self):
-        self.printList()
             
     def swap(self, cmd):
         """Swaps two items in the list."""
@@ -116,22 +113,21 @@ the last item of the sublist will be at the insert position."""
         else:
             print("Nothing is selects to insert")
 
-    def showList(self):
-        self.printList()
-
     def set(self, cmd):
         """Input commands that determine how renamer will function."""
         if cmd[1] == "name":
            self.setName(cmd)
         if cmd[1] == "start":
             self.setStart(cmd)
+        if cmd[1] == "zfill":
+            self.setZFill(cmd)
         if cmd[1] == "mode":
             self.setMode(cmd)
 
     def setName(self, cmd):
         """Allows the user to set the name that the files will be renamed to."""
         if len(self.mainList) > 0:
-            self.toName = self.string[len(cmd[0]) + len(cmd[1]) + 2:]
+            self.toName = self.string[len(cmd[0]) + len(cmd[1]) + 1:]
             self.printList()
             print()
             print("New name set to: " + self.toName)
@@ -152,6 +148,22 @@ the last item of the sublist will be at the insert position."""
         else:
             print("Must have a sorted list before setting the start num")
 
+    def setZFill(self, cmd):
+        """Sets a custom zfill amount greater than the automatic zfill."""
+        if len(self.mainList) > 0:
+            self._checkZFill()
+            if eval(cmd[2]) >= self.fill:
+                self.fill = eval(cmd[2])
+                print()
+                print("New zfill set to: " + str(self.fill))
+                print("Example: " + splitstring.stitch(self.toName, self.mainList[0].file, str(self.startNum).zfill(self.fill)))
+                print()
+            else:
+                print()
+                print("Cannot set zfill to be less than the automatic zfill")
+                print()
+
+
     def _checkZFill(self):
         """Check the zfill so that it is correct when a new start number has been added."""
         fill    = self.fill
@@ -163,7 +175,8 @@ the last item of the sublist will be at the insert position."""
         if (len(self.mainList) + self.startNum) > 10**(newFill):
             newFill += 1
 
-        self.fill = newFill
+        if newFill > self.fill:
+            self.fill = newFill
 
     def setMode(self, cmd):
         #Legacy from when prefix was a command
@@ -171,7 +184,7 @@ the last item of the sublist will be at the insert position."""
 
     def show(self, cmd):
         """Shows aspects of the program depend on the command entered after show."""
-        if   cmd[1] == "ext":
+        if cmd[1] == "ext":
             i = 1
             for item in self.mainList:
                 print(str(i).zfill(self.fill) + ": " + item.getFileExt())
@@ -240,8 +253,7 @@ the last item of the sublist will be at the insert position."""
 
     def cd(self, cmd):
         """An attempted to replicate the command line cd function for navigation."""
-        osnav.cd(self.string)
-           
+        osnav.cd(self.string)                       
 
     def processInput(self, cmd):
         """Takes a list of the command input split by spaces and calls functions according to the input.""" 
@@ -252,7 +264,7 @@ the last item of the sublist will be at the insert position."""
         elif cmd[0] == "ins" or cmd[0] == "insert":
             self.insert(cmd)
         elif cmd[0] == "lst" or cmd[0] == "list":
-            self.showList()
+            self.printList()
         elif cmd[0] == "rst":
             self.restart()
         elif cmd[0] == "set":

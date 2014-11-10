@@ -43,10 +43,36 @@ def help(cmd):
             print("Prints the list to the command line")
             print()
         elif cmd[1] == "set":
-            print("set name")
-            print("Sets the name of the listed output there are no automatic spaces")
-            print("It can be left blank if you want the list to simply be numbers")
-            print()
+            if len(cmd) == 2:
+                print("Set has a variety of sub commands.")
+                print("These are name, start, and zfill")
+                print("Type help set <subcommand> for the help on the topic")
+                print()
+            else:
+                if cmd[2] == "name":
+                    print("set name")
+                    print("Sets the name of the listed output with * being the position of the number")
+                    print("It can be left blank if you want the list to simply be numbers")
+                    print("If no * is placed then the number will be placed at the end without a space")
+                    print("% may be placed in the name to use the current name of the file")
+                    print("So if you wanted to prepend the current file with a number you can use:")
+                    print("\'set name * %\'")
+                    print()
+                elif cmd[2] == "start":
+                    print("set start")
+                    print("Sets the number at which the list will start the renaming")
+                    print("By default the renaming starts at 1, using start you can set this to any integer")
+                    print("Start does not affect the numbers which are used for input")
+                    print()
+                elif cmd[2] == "zfill":
+                    print("set zfill")
+                    print("Sets the amount of zeros (0) that are placed before the number")
+                    print("zfill can only increase the number of zeros")
+                    print("zfill works for the number of characters in the item as oppose only the number of zeros")
+                    print("If you had a list of 8 items and wanted a zero befor the item you would use:")
+                    print("\'set zfill 2\'")
+                    print()
+
         elif cmd[1] == "dir" or cmd[1] == "ls":
             print("dir or ls")
             print("Functions similar to the operating system function in that it will list the contents of the current directory")
