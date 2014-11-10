@@ -65,19 +65,23 @@ class Renamer(object):
             
     def swap(self, cmd):
         """Swaps two items in the list."""
-        term1, term2 = eval(cmd[1])-1, eval(cmd[2])-1
-        self.mainList[term1], self.mainList[term2] = self.mainList[term2], self.mainList[term1]
-        self.sel = False
-        self.printList()
+        if len(self.mainList) > 0:
+            term1, term2 = eval(cmd[1])-1, eval(cmd[2])-1
+            self.mainList[term1], self.mainList[term2] = self.mainList[term2], self.mainList[term1]
+            self.printList()
+        else:
+            print("Must have a sorted list before using swap")
 
     def select(self, cmd):
         """Creates a sublist between the two selected elements (1 indexed all inclusive)."""
-        self.subList = []
-        self.term1, self.term2 = eval(cmd[1]), eval(cmd[2])
-        self.term1 -= 1
-        self.subList = self.mainList[self.term1 : self.term2]
-        self.sel = True
-        self.printSubList()
+        if len(self.mainList) > 0:
+            self.subList = []
+            self.term1, self.term2 = eval(cmd[1]), eval(cmd[2])
+            self.term1 -= 1
+            self.subList = self.mainList[self.term1 : self.term2]
+            self.printSubList()
+        else:
+            print("Must have a sorted list before using select")
 
     def insert(self, cmd):
         """Inserts the sublist into the selected place
@@ -89,7 +93,7 @@ the first item of the sublist shall be at the insert position
 If the insert position is an element greater than the last item of the sublist
 the last item of the sublist will be at the insert position."""
 
-        if self.sel == True:
+        if len(self.subList) > 0:
             iIn = eval(cmd[1])
             if iIn > self.term1 and iIn <= self.term2:
                 print("Cannot insert the selected list into itself")
@@ -98,13 +102,13 @@ the last item of the sublist will be at the insert position."""
                 for j in range(len(self.subList)):
                     self.mainList.insert(iIn-1+j, self.subList[j])
                 self.printList()
-                self.sel = False
+                subList = []
             elif iIn > self.term2:
                 self.mainList[self.term1 : self.term2] = []
                 for j in range(len(self.subList)):
                     self.mainList.insert(iIn-len(self.subList)+j, self.subList[j])
                 self.printList()
-                self.sel = False                
+                subList = []                
         elif len(cmd) == 3: #Insersts first term into second one so user does not need to use sel
             if eval(cmd[1]) != eval(cmd[2]):
                 self.select(["sel", cmd[1], cmd[1]])
@@ -127,7 +131,7 @@ the last item of the sublist will be at the insert position."""
     def setName(self, cmd):
         """Allows the user to set the name that the files will be renamed to."""
         if len(self.mainList) > 0:
-            self.toName = self.string[len(cmd[0]) + len(cmd[1]) + 1:]
+            self.toName = self.string[len(cmd[0]) + len(cmd[1]) + 2:]
             self.printList()
             print()
             print("New name set to: " + self.toName)

@@ -17,8 +17,12 @@ def stitch(toName, oldName, num):
         if second == -1:
             second = 0
 
-        parts.append(toName[:first])
-        parts.append(toName[first])
+        if first != 0:
+            parts.append(toName[:first])
+            parts.append(toName[first])
+        else:
+            parts.append('')
+            parts.append('')
         parts.append(toName[first+1:second])
         parts.append(toName[second])
         parts.append(toName[second+1:])
@@ -28,25 +32,22 @@ def stitch(toName, oldName, num):
                 parts[3] = oldName
             else:
                 parts[1] = oldName
-        else:
-            if find == 0:
-                parts[3] = ''
-            else:
-                parts[1] = ''
 
-        if find == 0:
-            parts[1] = num
-        else:
-            parts[3] = num
+        if posNum != -1:
+            if find == 0:
+                parts[1] = num
+            else:
+                parts[3] = num
 
         string = ''
 
         for part in parts:
-            string += part
+            if part != ' ':
+                string += part
 
         if posNum == -1:
             string += num
     else:
-        string = oldName + num
+        string = num
 
     return string
