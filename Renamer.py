@@ -131,7 +131,7 @@ the last item of the sublist will be at the insert position."""
     def setName(self, cmd):
         """Allows the user to set the name that the files will be renamed to."""
         if len(self.mainList) > 0:
-            self.toName = self.string[len(cmd[0]) + len(cmd[1]) + 2:]
+            self.toName = self.string[_lenCmdStr(cmd,2):]
             self.printList()
             print()
             print("New name set to: " + self.toName)
@@ -182,23 +182,42 @@ the last item of the sublist will be at the insert position."""
         if newFill > self.fill:
             self.fill = newFill
 
+    def _lenCmdStr(cmd, int):
+        """Returns the length of the substring elements to the number of the index"""
+        result = 0
+        if len(cmd) >= int:
+            for i in range(int):
+                result += len(cmd[i]) + 1
+        return result
+
+
     def setMode(self, cmd):
         #Legacy from when prefix was a command
         pass
 
     def show(self, cmd):
         """Shows aspects of the program depend on the command entered after show."""
-        if cmd[1] == "ext":
-            i = 1
-            for item in self.mainList:
-                print(str(i).zfill(self.fill) + ": " + item.getFileExt())
-                i += 1
-        elif cmd[1] == "file":
-            i = 1
-            for item in self.mainList:
-                print(str(i).zfill(self.fill) + ": " + item.getFileName())
-                i +=1
-    
+        if len(self.mainList) > 0:
+            if len(cmd) > 1:
+                if cmd[1] == "ext":
+                    i = 1
+                    for item in self.mainList:
+                        print(str(i).zfill(self.fill) + ": " + item.getFileExt())
+                        i += 1
+                elif cmd[1] == "file":
+                    i = 1
+                    for item in self.mainList:
+                        print(str(i).zfill(self.fill) + ": " + item.getFileName())
+                        i +=1
+                elif cmd[1] == "list" or cmd[1] == "lst":
+                    self.printList()
+                elif cmd[1] == "sublist":
+                    self.printSubList()
+            else:
+                print("please select a subcommand for show,\nSubcommands are ext or file.")
+        else:
+            print("Must have a sorted list befor using show.")
+        
 
     def sort(self):
         """Used to set the current directory to that in which the files shall be renamed."""
@@ -269,7 +288,7 @@ the last item of the sublist will be at the insert position."""
             self.insert(cmd)
         elif cmd[0] == "lst" or cmd[0] == "list":
             self.printList()
-        elif cmd[0] == "rst":
+        elif cmd[0] == "rst" or cmd[0] == "reset":
             self.restart()
         elif cmd[0] == "set":
             self.set(cmd)
