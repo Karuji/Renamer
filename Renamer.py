@@ -131,7 +131,7 @@ the last item of the sublist will be at the insert position."""
     def setName(self, cmd):
         """Allows the user to set the name that the files will be renamed to."""
         if len(self.mainList) > 0:
-            self.toName = self.string[_lenCmdStr(cmd,2):]
+            self.toName = self.string[self._lenCmdStr(cmd,2):]
             self.printList()
             print()
             print("New name set to: " + self.toName)
@@ -182,11 +182,13 @@ the last item of the sublist will be at the insert position."""
         if newFill > self.fill:
             self.fill = newFill
 
-    def _lenCmdStr(cmd, int):
-        """Returns the length of the substring elements to the number of the index"""
+    def _lenCmdStr(self, cmd, ind):
+        """Returns the length sum of the length of substring elements to the index"""
+        # This is used in conjunction with the input string to remove the commands from the input
+
         result = 0
-        if len(cmd) >= int:
-            for i in range(int):
+        if len(cmd) >= ind:
+            for i in range(ind):
                 result += len(cmd[i]) + 1
         return result
 
