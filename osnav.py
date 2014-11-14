@@ -17,6 +17,9 @@ def cd(string):
 
     if string == '..' + os.sep:
         newPath = os.path.dirname(os.getcwd())
+        if len(string) > 3:
+            string = string[string.find(os.sep)+1:]
+            cd(string)
     else:
         newPath = os.path.join(os.getcwd(), os.sep, string)
     if os.path.isdir(newPath):
