@@ -19,10 +19,9 @@ def stitch(toName, oldName, num):
 
         if first != 0:
             parts.append(toName[:first])
-            parts.append(toName[first])
         else:
             parts.append('')
-            parts.append('')
+        parts.append(toName[first])
         parts.append(toName[first+1:second])
         parts.append(toName[second])
         parts.append(toName[second+1:])

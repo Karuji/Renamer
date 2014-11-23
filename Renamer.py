@@ -132,13 +132,12 @@ the last item of the sublist will be at the insert position."""
         """Allows the user to set the name that the files will be renamed to."""
         if len(self.mainList) > 0:
             self.toName = self.string[self._lenCmdStr(cmd,2):]
-            self.printList()
             print()
             print("New name set to: " + self.toName)
-            print("Example: " + splitstring.stitch(self.toName, self.mainList[0].file, str(self.startNum).zfill(self.fill)))
+            print("Example: " + splitstring.stitch(self.toName, self.mainList[0].file, self._zFillNum()))
             print()
         else:
-            print("Must have a sorted list before setting name")
+            print("Must have a sorted list before setting name\n")
 
     def setStart(self, cmd):
         """Sets the starting number from which the files will be renamed."""
@@ -148,9 +147,9 @@ the last item of the sublist will be at the insert position."""
             print()
             print("New starting number is " + str(self.startNum))
             print("zfill is " + str(self.fill))
-            print("Example: " + splitstring.stitch(self.toName, self.mainList[0].file, str(self.startNum).zfill(self.fill)))
+            print("Example: " + splitstring.stitch(self.toName, self.mainList[0].file, self._zFillNum()))
         else:
-            print("Must have a sorted list before setting the start num")
+            print("Must have a sorted list before setting the start num\n")
 
     def setZFill(self, cmd):
         """Sets a custom zfill amount greater than the automatic zfill."""
@@ -160,12 +159,10 @@ the last item of the sublist will be at the insert position."""
                 self.fill = eval(cmd[2])
                 print()
                 print("New zfill set to: " + str(self.fill))
-                print("Example: " + splitstring.stitch(self.toName, self.mainList[0].file, str(self.startNum).zfill(self.fill)))
+                print("Example: " + splitstring.stitch(self.toName, self.mainList[0].file, self._zFillNum()))
                 print()
             else:
-                print()
-                print("Cannot set zfill to be less than the automatic zfill")
-                print()
+                print("Cannot set zfill to be less than the automatic zfill\n")
 
 
     def _checkZFill(self):
@@ -191,6 +188,10 @@ the last item of the sublist will be at the insert position."""
             for i in range(ind):
                 result += len(cmd[i]) + 1
         return result
+
+    def _zFillNum(self):
+        """Shorthand function to keep code clean"""
+        return str(self.startNum).zfill(self.fill)
 
 
     def setMode(self, cmd):
@@ -263,10 +264,19 @@ the last item of the sublist will be at the insert position."""
                 #     print("Catching exception here")
                 i += 1
                 #self.printList()
-            self.mainList = []
-
+            self.restart()
         else:
             print('No files have been selected be to renamed. Use sort before rename.')
+
+    def restart(self):
+        self.mainList     = []
+        self.subList      = []
+        self.fill         = 0
+        self.startNum     = 1
+        self.toName       = ""
+        self.string       = ""
+        self.sel          = False
+        self.term1, term2 = 0, 0
 
     def help(self, cmd):
         """Shows help depending on what the user enters."""
@@ -290,7 +300,7 @@ the last item of the sublist will be at the insert position."""
             self.insert(cmd)
         elif cmd[0] == "lst" or cmd[0] == "list":
             self.printList()
-        elif cmd[0] == "rst" or cmd[0] == "reset":
+        elif cmd[0] == "rst" or cmd[0] == "reset" or cmd[0] == "restart":
             self.restart()
         elif cmd[0] == "set":
             self.set(cmd)
@@ -313,7 +323,15 @@ def main():
     renamer = Renamer()
     print("""Renamer
 
-Copyright (c) 2014 Julian Pritchard""")
+Copyright (c) 2014 Julian Pritchard
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.""")
     print()
     print("Type help functions for a list of commands")
     while True:
