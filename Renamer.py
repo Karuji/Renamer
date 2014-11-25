@@ -40,6 +40,15 @@ class Renamer(object):
     def __init__(self):
         self.restart()
 
+    def restart(self):
+        self.mainList     = []
+        self.subList      = []
+        self.fill         = 0
+        self.startNum     = 1
+        self.toName       = ""
+        self.string       = ""
+        self.term1, term2 = 0, 0
+
     def printList(self):
         """Prints the names of the current files in the directoy."""
         i = 1
@@ -67,14 +76,33 @@ class Renamer(object):
         else:
             print("Must have a sorted list before using swap")
 
+    def _indexCheck(self, container, index):
+        if index <= 0 or index > len(container):
+            return False
+        else:
+            return True
+
     def select(self, cmd):
         """Creates a sublist between the two selected elements (1 indexed all inclusive)."""
         if len(self.mainList) > 0:
             self.subList = []
-            self.term1, self.term2 = eval(cmd[1]), eval(cmd[2])
-            self.term1 -= 1
-            self.subList = self.mainList[self.term1 : self.term2]
-            self.printSubList()
+            if len(cmd) == 3:
+                self.term1, self.term2 = eval(cmd[1]), eval(cmd[2])
+            elif len(cmd) == 2:
+                self.term1, self.term2 = eval(cmd[1]), eval(cmd[1])
+            else:
+                print("Invalid number of terms for select")
+                return None
+            # Make sure term1 is always the lower term.
+            if self.term1 > self.term2:
+                self.term1, self.term2 = self.term2, self.term1
+            # Check that the numbers are valid list items.
+            if self._indexCheck(self.mainList, self.term1) and self._indexCheck(self.mainList, self.term2):
+                self.term1 -= 1
+                self.subList = self.mainList[self.term1 : self.term2]
+                self.printSubList()
+            else:
+                print("Must select items in list number\n")
         else:
             print("Must have a sorted list before using select\n")
 
@@ -94,24 +122,30 @@ the last item of the sublist will be at the insert position."""
                     if iIn > self.term1 and iIn <= self.term2:
                         print("Cannot insert the selected list into itself")
                     else:
+                        # Inserting to a number lower than selected.
                         if iIn <= self.term1:
                             self.mainList[self.term1 : self.term2] = []
                             for j in range(len(self.subList)):
                                 self.mainList.insert(iIn-1+j, self.subList[j])
+                        # Inserting to a humber higher than selected.
                         elif iIn > self.term2:
                             self.mainList[self.term1 : self.term2] = []
                             for j in range(len(self.subList)):
                                 self.mainList.insert(iIn-len(self.subList)+j, self.subList[j])
+                        # Common to both case hence the else then an if and not an elif
                         self.printList()
                         self.subList = []
+                # if len(self.subList) > 0:
                 else:
                     print("Nothing to insert\n")                
+            # if len(cmd) == 2:
             elif len(cmd) == 3: #Insersts first term into second one so user does not need to use sel
                 if eval(cmd[1]) != eval(cmd[2]):
                     self.select(["sel", cmd[1], cmd[1]])
                     self.insert(["ins", cmd[2]])
                 else:
                     print("Cannot insert an item into itself\n")
+        # if len(self.mainList) > 0:
         else:
             print("Must have a sorted list before using select\n")
 
@@ -265,15 +299,6 @@ the last item of the sublist will be at the insert position."""
             self.restart()
         else:
             print('No files have been selected be to renamed. Use sort before rename.')
-
-    def restart(self):
-        self.mainList     = []
-        self.subList      = []
-        self.fill         = 0
-        self.startNum     = 1
-        self.toName       = ""
-        self.string       = ""
-        self.term1, term2 = 0, 0
 
     def help(self, cmd):
         """Shows help depending on what the user enters."""
