@@ -35,15 +35,10 @@ class RenamerFile(FileName):
 
             
 class Renamer(object):
-    """Takes a directory and renams the files in that directory in an ordered manner."""
-    mainList     = []
-    subList      = []
-    fill         = 0
-    startNum     = 1
-    toName       = ""
-    string       = ""
-    sel          = False
-    term1, term2 = 0, 0
+    """Takes a directory and renames the files in that directory in an ordered manner."""
+    
+    def __init__(self):
+        self.restart()
 
     def printList(self):
         """Prints the names of the current files in the directoy."""
@@ -81,7 +76,7 @@ class Renamer(object):
             self.subList = self.mainList[self.term1 : self.term2]
             self.printSubList()
         else:
-            print("Must have a sorted list before using select")
+            print("Must have a sorted list before using select\n")
 
     def insert(self, cmd):
         """Inserts the sublist into the selected place
@@ -92,30 +87,33 @@ the first item of the sublist shall be at the insert position
 
 If the insert position is an element greater than the last item of the sublist
 the last item of the sublist will be at the insert position."""
-
-        if len(self.subList) > 0:
-            iIn = eval(cmd[1])
-            if iIn > self.term1 and iIn <= self.term2:
-                print("Cannot insert the selected list into itself")
-            elif iIn <= self.term1:
-                self.mainList[self.term1 : self.term2] = []
-                for j in range(len(self.subList)):
-                    self.mainList.insert(iIn-1+j, self.subList[j])
-                self.printList()
-                subList = []
-            elif iIn > self.term2:
-                self.mainList[self.term1 : self.term2] = []
-                for j in range(len(self.subList)):
-                    self.mainList.insert(iIn-len(self.subList)+j, self.subList[j])
-                self.printList()
-                subList = []                
-        elif len(cmd) == 3: #Insersts first term into second one so user does not need to use sel
-            if eval(cmd[1]) != eval(cmd[2]):
-                self.select(["sel", cmd[1], cmd[1]])
-                self.insert(["ins", cmd[2]])
-
+        if len(self.mainList) > 0:
+            if len(cmd) == 2:
+                if len(self.subList) > 0:
+                    iIn = eval(cmd[1])
+                    if iIn > self.term1 and iIn <= self.term2:
+                        print("Cannot insert the selected list into itself")
+                    else:
+                        if iIn <= self.term1:
+                            self.mainList[self.term1 : self.term2] = []
+                            for j in range(len(self.subList)):
+                                self.mainList.insert(iIn-1+j, self.subList[j])
+                        elif iIn > self.term2:
+                            self.mainList[self.term1 : self.term2] = []
+                            for j in range(len(self.subList)):
+                                self.mainList.insert(iIn-len(self.subList)+j, self.subList[j])
+                        self.printList()
+                        self.subList = []
+                else:
+                    print("Nothing to insert\n")                
+            elif len(cmd) == 3: #Insersts first term into second one so user does not need to use sel
+                if eval(cmd[1]) != eval(cmd[2]):
+                    self.select(["sel", cmd[1], cmd[1]])
+                    self.insert(["ins", cmd[2]])
+                else:
+                    print("Cannot insert an item into itself\n")
         else:
-            print("Nothing is selects to insert")
+            print("Must have a sorted list before using select\n")
 
     def set(self, cmd):
         """Input commands that determine how renamer will function."""
@@ -275,7 +273,6 @@ the last item of the sublist will be at the insert position."""
         self.startNum     = 1
         self.toName       = ""
         self.string       = ""
-        self.sel          = False
         self.term1, term2 = 0, 0
 
     def help(self, cmd):
