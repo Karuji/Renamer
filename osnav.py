@@ -15,20 +15,45 @@ def cd(string):
     if string[-1] != os.sep:
         string += os.sep
 
-    if string == '..' + os.sep:
-        newPath = os.path.dirname(os.getcwd())
-        if len(string) > 3:
-            string = string[string.find(os.sep)+1:]
-            cd(string)
+    if '..' in string:
+        container = string.split(os.sep)
+        # Remove blanks so that we don't change to the root.
+        for item in container:
+            if item == '':
+                container.pop(container.index(item))
+        _cdParts(container, os.getcwd())
     else:
         newPath = os.path.join(os.getcwd(), os.sep, string)
-    if os.path.isdir(newPath):
-        os.chdir(newPath)
-        print(os.getcwd())
-    else:
-        newPath = string
         if os.path.isdir(newPath):
             os.chdir(newPath)
             print(os.getcwd())
         else:
-            print(newPath + " is not a correct directory: err#4")
+            newPath = string
+            if os.path.isdir(newPath):
+                os.chdir(newPath)
+                print(os.getcwd())
+            else:
+                print(newPath + " is not a correct directory: err#4")
+
+def _cdParts(container, orig):
+    if container[0] == '..':
+        container.pop(0)
+        os.chdir(os.path.dirname(os.getcwd()))
+        check = True
+    else:
+        target = container.pop(0)
+        #newPath = os.path.join(os.getcwd(), os.sep, target)
+        newPath = os.getcwd() + os.sep + target
+        print(newPath)
+        if os.path.isdir(newPath):
+            os.chdir(newPath)
+            check = False
+        else:
+            os.chdir(orig)
+            print('Invalid directory\n')
+            return None
+    if len(container) > 0:
+        _cdParts(container, orig)
+    else:
+        if check:
+            print(os.getcwd())
