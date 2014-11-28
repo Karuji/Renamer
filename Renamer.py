@@ -71,7 +71,8 @@ class Renamer(object):
         """Swaps two items in the list."""
         if len(self.mainList) > 0:
             term1, term2 = eval(cmd[1])-1, eval(cmd[2])-1
-            if self._indexCheck(term1) && self._indexCheck(term2):
+            check = self._indexCheck
+            if check(self.mainList, term1) and check(self.mainList, term2):
                 self.mainList[term1], self.mainList[term2] = self.mainList[term2], self.mainList[term1]
                 self.printList()
             else:
@@ -80,6 +81,14 @@ class Renamer(object):
             print("Must have a sorted list before using swap.\n")
 
     def _indexCheck(self, container, index):
+        """Checks the input after it has been converted to container numbers."""
+        if index < 0 or index >= len(container):
+            return False
+        else:
+            return True
+
+    def _indexCheckRaw(self, container, index):
+        """Checks the input as the user has typed it."""
         if index <= 0 or index > len(container):
             return False
         else:
@@ -103,7 +112,8 @@ class Renamer(object):
             if self.term1 > self.term2:
                 self.term1, self.term2 = self.term2, self.term1
             # Check that the numbers are valid list items.
-            if self._indexCheck(self.mainList, self.term1) and self._indexCheck(self.mainList, self.term2):
+            check = self._indexCheckRaw
+            if check(self.mainList, self.term1) and check(self.mainList, self.term2):
                 # Select the number(s) and put them into a container.
                 self.term1 -= 1
                 self.subList = self.mainList[self.term1 : self.term2]
