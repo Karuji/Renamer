@@ -71,10 +71,13 @@ class Renamer(object):
         """Swaps two items in the list."""
         if len(self.mainList) > 0:
             term1, term2 = eval(cmd[1])-1, eval(cmd[2])-1
-            self.mainList[term1], self.mainList[term2] = self.mainList[term2], self.mainList[term1]
-            self.printList()
+            if self._indexCheck(term1) && self._indexCheck(term2):
+                self.mainList[term1], self.mainList[term2] = self.mainList[term2], self.mainList[term1]
+                self.printList()
+            else:
+                print("Must swap items in the list.\n")
         else:
-            print("Must have a sorted list before using swap")
+            print("Must have a sorted list before using swap.\n")
 
     def _indexCheck(self, container, index):
         if index <= 0 or index > len(container):
@@ -86,20 +89,25 @@ class Renamer(object):
         """Creates a sublist between the two selected elements (1 indexed all inclusive)."""
         if len(self.mainList) > 0:
             self.subList = []
+            # Selects a range of items.
             if len(cmd) == 3:
                 self.term1, self.term2 = eval(cmd[1]), eval(cmd[2])
+            # Selects a single items.
             elif len(cmd) == 2:
                 self.term1, self.term2 = eval(cmd[1]), eval(cmd[1])
+            # Tell the user they did something wrong, and end the function.
             else:
-                print("Invalid number of terms for select")
+                print("Invalid number of terms for select.\n")
                 return None
             # Make sure term1 is always the lower term.
             if self.term1 > self.term2:
                 self.term1, self.term2 = self.term2, self.term1
             # Check that the numbers are valid list items.
             if self._indexCheck(self.mainList, self.term1) and self._indexCheck(self.mainList, self.term2):
+                # Select the number(s) and put them into a container.
                 self.term1 -= 1
                 self.subList = self.mainList[self.term1 : self.term2]
+                # Print the selection.
                 self.printSubList()
             else:
                 print("Must select items in list number\n")
