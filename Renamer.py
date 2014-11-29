@@ -50,7 +50,7 @@ class Renamer(object):
         self.term1, term2 = 0, 0
 
     def printList(self):
-        """Prints the names of the current files in the directoy."""
+        """Prints the names of the current files in renamer."""
         i = 1
         for item in self.mainList:
             print(str(i).zfill(self.fill) + ": " + item.getName())
@@ -62,6 +62,20 @@ class Renamer(object):
         for item in self.subList:
             print(item.getName())
         print()
+
+    def printFileName(self):
+        """Print a list of file names."""
+        i = 1
+        for item in self.mainList:
+            print(str(i).zfill(self.fill) + ": " + item.getFileName())
+            i +=1
+
+    def printFileExt(self):
+        """Print the extention of the file."""
+        i = 1
+        for item in self.mainList:
+            print(str(i).zfill(self.fill) + ": " + item.getFileExt())
+            i += 1
 
     def inString(self, string):
         """Stores the raw input from the command line as a string."""
@@ -182,8 +196,7 @@ the last item of the sublist will be at the insert position."""
         """Allows the user to set the name that the files will be renamed to."""
         if len(self.mainList) > 0:
             self.toName = self.string[self._lenCmdStr(cmd,2):]
-            print()
-            print("New name set to: " + self.toName)
+            print("\nNew name set to: " + self.toName)
             print("Example: " + splitstring.stitch(self.toName, self.mainList[0].file, self._zFillNum()))
             print()
         else:
@@ -194,8 +207,7 @@ the last item of the sublist will be at the insert position."""
         if len(self.mainList) > 0:
             self.startNum = eval(cmd[2])
             self._checkZFill()
-            print()
-            print("New starting number is " + str(self.startNum))
+            print("\nNew starting number is " + str(self.startNum))
             print("zfill is " + str(self.fill))
             print("Example: " + splitstring.stitch(self.toName, self.mainList[0].file, self._zFillNum()))
         else:
@@ -207,22 +219,22 @@ the last item of the sublist will be at the insert position."""
             self._checkZFill()
             if eval(cmd[2]) >= self.fill:
                 self.fill = eval(cmd[2])
-                print()
-                print("New zfill set to: " + str(self.fill))
+                print("\nNew zfill set to: " + str(self.fill))
                 print("Example: " + splitstring.stitch(self.toName, self.mainList[0].file, self._zFillNum()))
                 print()
             else:
                 print("Cannot set zfill to be less than the automatic zfill\n")
 
-
     def _checkZFill(self):
         """Check the zfill so that it is correct when a new start number has been added."""
-        fill    = self.fill
-        newFill = fill        
+        # Value that will eventually be returned, if it is bigger than the fill.
+        newFill = self.fill        
 
-        if len(str(self.startNum)) > fill:
+        # Check for when the start num is something large.
+        if len(str(self.startNum)) > self.fill:
             newFill = len(str(self.startNum))
 
+        # Adjust in case startNum pushed fill to be a new power of 10 (10s to 100s)
         if (len(self.mainList) + self.startNum) > 10**(newFill):
             newFill += 1
 
@@ -230,9 +242,8 @@ the last item of the sublist will be at the insert position."""
             self.fill = newFill
 
     def _lenCmdStr(self, cmd, ind):
-        """Returns the length sum of the length of substring elements to the index"""
+        """Returns the sum of the length of a substring element composed of elements until the index"""
         # This is used in conjunction with the input string to remove the commands from the input
-
         result = 0
         if len(cmd) >= ind:
             for i in range(ind):
@@ -253,15 +264,9 @@ the last item of the sublist will be at the insert position."""
         if len(self.mainList) > 0:
             if len(cmd) > 1:
                 if cmd[1] == "ext":
-                    i = 1
-                    for item in self.mainList:
-                        print(str(i).zfill(self.fill) + ": " + item.getFileExt())
-                        i += 1
+                    self.printFileExt()
                 elif cmd[1] == "file":
-                    i = 1
-                    for item in self.mainList:
-                        print(str(i).zfill(self.fill) + ": " + item.getFileName())
-                        i +=1
+                    self.printFileName()
                 elif cmd[1] == "list" or cmd[1] == "lst":
                     self.printList()
                 elif cmd[1] == "sublist":
@@ -332,32 +337,36 @@ the last item of the sublist will be at the insert position."""
 
     def processInput(self, cmd):
         """Takes a list of the command input split by spaces and calls functions according to the input.""" 
-        if cmd[0]   == "swt" or cmd[0] == "swp" or cmd[0] == "swap":
-            self.swap(cmd)
-        elif cmd[0] == "sel" or cmd[0] == "select":
-            self.select(cmd)
-        elif cmd[0] == "ins" or cmd[0] == "insert":
-            self.insert(cmd)
-        elif cmd[0] == "lst" or cmd[0] == "list":
-            self.printList()
-        elif cmd[0] == "rst" or cmd[0] == "reset" or cmd[0] == "restart":
-            self.restart()
+        # Renaming commands.
+        if cmd[0] == "srt" or cmd[0] == "sort":
+            self.sort()
         elif cmd[0] == "set":
             self.set(cmd)
-        elif cmd[0] == "dir" or cmd[0] == "ls":
-            self.dir()
-        elif cmd[0] == "cd":
-            self.cd(cmd)
-        elif cmd[0] == "srt" or cmd[0] == "sort":
-            self.sort()
+        elif cmd[0] == "rename":
+            self.rename()
+        elif cmd[0] == "rst" or cmd[0] == "reset" or cmd[0] == "restart":
+            self.restart()
+        # Arranging commands.
+        elif cmd[0] == "ins" or cmd[0] == "insert":
+            self.insert(cmd)
+        elif cmd[0] == "sel" or cmd[0] == "select":
+            self.select(cmd)
+        elif cmd[0] == "swt" or cmd[0] == "swp" or cmd[0] == "swap":
+            self.swap(cmd)
         elif cmd[0] == "rm" or cmd[0] == "remove":
             self.remove(cmd)
+        # Display / Help commands.
+        elif cmd[0] == "lst" or cmd[0] == "list":
+            self.printList()
         elif cmd[0] == "shw" or cmd[0] == "show":
             self.show(cmd)
         elif cmd[0] == "help":
             self.help(cmd)
-        elif cmd[0] == "rename":
-            self.rename()
+        # Navigational commands.
+        elif cmd[0] == "dir" or cmd[0] == "ls":
+            self.dir()
+        elif cmd[0] == "cd":
+            self.cd(cmd)
         
 def main():
     renamer = Renamer()
