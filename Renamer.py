@@ -336,36 +336,37 @@ the last item of the sublist will be at the insert position."""
         osnav.cd(self.string)                       
 
     def processInput(self, cmd):
-        """Takes a list of the command input split by spaces and calls functions according to the input.""" 
+        """Takes a list of the command input split by spaces and calls functions according to the input."""
+        cmd[0] = cmd[0].lower() 
         # Renaming commands.
-        if cmd[0] == "srt" or cmd[0] == "sort":
+        if cmd[0] == 'srt' or cmd[0] == 'sort':
             self.sort()
-        elif cmd[0] == "set":
+        elif cmd[0] == 'set':
             self.set(cmd)
-        elif cmd[0] == "rename":
+        elif cmd[0] == 'rename':
             self.rename()
-        elif cmd[0] == "rst" or cmd[0] == "reset" or cmd[0] == "restart":
+        elif cmd[0] == 'rst' or cmd[0] == 'reset' or cmd[0] == 'restart':
             self.restart()
         # Arranging commands.
-        elif cmd[0] == "ins" or cmd[0] == "insert":
+        elif cmd[0] == 'ins' or cmd[0] == 'insert':
             self.insert(cmd)
-        elif cmd[0] == "sel" or cmd[0] == "select":
+        elif cmd[0] == 'sel' or cmd[0] == 'select':
             self.select(cmd)
-        elif cmd[0] == "swt" or cmd[0] == "swp" or cmd[0] == "swap":
+        elif cmd[0] == 'swt' or cmd[0] == 'swp' or cmd[0] == 'swap':
             self.swap(cmd)
-        elif cmd[0] == "rm" or cmd[0] == "remove":
+        elif cmd[0] == 'rm' or cmd[0] == 'remove':
             self.remove(cmd)
         # Display / Help commands.
-        elif cmd[0] == "lst" or cmd[0] == "list":
+        elif cmd[0] == 'lst' or cmd[0] == 'list':
             self.printList()
-        elif cmd[0] == "shw" or cmd[0] == "show":
+        elif cmd[0] == 'shw' or cmd[0] == 'show':
             self.show(cmd)
-        elif cmd[0] == "help":
+        elif cmd[0] == 'help':
             self.help(cmd)
         # Navigational commands.
-        elif cmd[0] == "dir" or cmd[0] == "ls":
+        elif cmd[0] == 'dir' or cmd[0] == 'ls':
             self.dir()
-        elif cmd[0] == "cd":
+        elif cmd[0] == 'cd':
             self.cd(cmd)
         
 def main():
@@ -385,7 +386,7 @@ THE SOFTWARE.""")
     print("Type help functions for a list of commands")
     while True:
             var = input("Enter a Command: ")
-            if var == "exit":
+            if var.lower() == 'exit':
                     break
             renamer.inString( var)
             var = var.split(" ")
