@@ -173,7 +173,7 @@ the last item of the sublist will be at the insert position."""
             # if len(cmd) == 2:
             elif len(cmd) == 3: #Insersts first term into second one so user does not need to use sel
                 if eval(cmd[1]) != eval(cmd[2]):
-                    self.select(["sel", cmd[1], cmd[1]])
+                    self.select(["sel", cmd[1]])
                     self.insert(["ins", cmd[2]])
                 else:
                     print("Cannot insert an item into itself\n")
