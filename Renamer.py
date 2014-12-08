@@ -8,6 +8,7 @@ import splitstring
 import osnav
 
 class RenamerFile(FileName):
+    """Modified FileName for renamer."""
 
     def __init__(self, string, renamer):
         super().__init__(string)
@@ -254,7 +255,6 @@ the last item of the sublist will be at the insert position."""
         """Shorthand function to keep code clean"""
         return str(self.startNum).zfill(self.fill)
 
-
     def setMode(self, cmd):
         #Legacy from when prefix was a command
         pass
@@ -274,8 +274,14 @@ the last item of the sublist will be at the insert position."""
             else:
                 print("please select a subcommand for show,\nSubcommands are ext or file.")
         else:
-            print("Must have a sorted list befor using show.")
-        
+            print("Must have a sorted list befor using show.")   
+
+    def list(self, cmd):
+        cmd[1] = cmd[1].lower()
+        if(cmd[1] == 'folder'):
+            dirList = os.listdir(os.getcwd())
+            for item in dirList:
+                print(item)
 
     def sort(self):
         """Used to set the current directory to that in which the files shall be renamed."""
@@ -357,8 +363,6 @@ the last item of the sublist will be at the insert position."""
         elif cmd[0] == 'rm' or cmd[0] == 'remove':
             self.remove(cmd)
         # Display / Help commands.
-        elif cmd[0] == 'lst' or cmd[0] == 'list':
-            self.printList()
         elif cmd[0] == 'shw' or cmd[0] == 'show':
             self.show(cmd)
         elif cmd[0] == 'help':
@@ -368,6 +372,8 @@ the last item of the sublist will be at the insert position."""
             self.dir()
         elif cmd[0] == 'cd':
             self.cd(cmd)
+        elif cmd[0] == 'lst' or cmd[0] == 'list':
+            self.list(cmd)
         
 def main():
     renamer = Renamer()
