@@ -6,6 +6,7 @@ from FileName import *
 import RenamerHelp
 import splitstring
 import osnav
+import random
 
 class RenamerFile(FileName):
     """Modified FileName for renamer."""
@@ -16,20 +17,32 @@ class RenamerFile(FileName):
         self._oldName  = string
         self.renamer = renamer
 
+    def randomUni(self):
+        result = ''
+        for i in range(16):
+            result += chr(random.choice((0x300, 0x2000)) + random.randint(0, 0xff))
+        return result
+
     def rename(self):
         """Renames the file from the current name (string) to the new one (file)."""
         self.newName = self.file + self.extention
         os.rename(self.string, self.newName)
         #print(self.string + "-->" + self.newName)
 
+    def renameBuffer(self):
+        self.tempName = self._oldName + " --^^ " + self.file + ' ' + self.randomUni() + self.extention
+        try:
+            os.rename(self.string, self.tempName)
+            self.string = self.tempName
+        except FileExistsError:
+            remameBuffer()
+
+
     def renamePrint(self):
         """Functions like rename but prints the change from original filename to new."""
         self.newName = self.file + self.extention
-        try:
-            os.rename(self.string, self.newName)
-            print(self._oldName + " --> " + self.newName)
-        except FileExistsError:
-            raise
+        os.rename(self.tempName, self.newName)
+        print(self._oldName + " --> " + self.newName)
 
     def setFileName(self, name, num):
         self.file = splitstring.stitch(name, self.file, num)
@@ -279,9 +292,21 @@ the last item of the sublist will be at the insert position."""
     def list(self, cmd):
         cmd[1] = cmd[1].lower()
         if(cmd[1] == 'folder'):
+            self.listFolder(cmd)
+            
+
+    def listFolder(self, cmd):
+        if len(cmd) == 2:
             dirList = os.listdir(os.getcwd())
             for item in dirList:
                 print(item)
+        else:
+            cmd[2] = cmd[2].lower()
+            if cmd[2] == 'numbered':
+                dirList = os.listdir(os.getcwd())
+                zfill = len(str(len(dirList)))
+                for i in range(len(dirList)):
+                    print(str(i+1).zfill(zfill) + ': ' + dirList[i])
 
     def sort(self):
         """Used to set the current directory to that in which the files shall be renamed."""
@@ -313,18 +338,24 @@ the last item of the sublist will be at the insert position."""
             else:
                 print("Number range for removal is incorrect err#5")
 
+    def _renameList(self):
+        #Rename files to a temp name to avoid conflicts
+        i = self.startNum
+        for item in self.mainList:
+            item.setFileName(self.toName, str(i).zfill(self.fill))
+            item.renameBuffer()
+            i += 1
+        #Rename to final name showing change from original name
+        i = self.startNum
+        for item in self.mainList:
+            item.renamePrint()
+            i += 1
+
     def rename(self):
         """Renames the files in the list to their new name."""
         #Need to update to deal with naming conflicts.
         if len(self.mainList) > 0:
-            i = self.startNum
-            for item in self.mainList:
-                item.setFileName(self.toName, str(i).zfill(self.fill))
-                item.renamePrint()
-                # except FileExistsError:
-                #     print("Catching exception here")
-                i += 1
-                #self.printList()
+            self._renameList()
             self.restart()
         else:
             print('No files have been selected be to renamed. Use sort before rename.')
