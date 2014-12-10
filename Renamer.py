@@ -185,7 +185,8 @@ the last item of the sublist will be at the insert position."""
                 else:
                     print("Nothing to insert\n")                
             # if len(cmd) == 2:
-            elif len(cmd) == 3: #Insersts first term into second one so user does not need to use sel
+            # Insersts first term into second one so user does not need to use sel
+            elif len(cmd) == 3: 
                 if eval(cmd[1]) != eval(cmd[2]):
                     self.select(["sel", cmd[1]])
                     self.insert(["ins", cmd[2]])
@@ -326,17 +327,37 @@ the last item of the sublist will be at the insert position."""
     def remove(self, cmd):
         """If a single number is passed then that number is removed from the list
         If two numbers are passed than the range of those numbers is removed from the list"""
-        if len(cmd) == 2:
-            self.mainList.pop(eval(cmd[1])-1)
-            self.printList()
-        elif len(cmd) == 3:
-            if eval(cmd[1]) < eval(cmd[2]):
-                list1 = self.mainList[0:eval(cmd[1])-1]
-                list2 = self.mainList[eval(cmd[2]):len(self.mainList)]
-                self.mainList = list1 + list2
-                self.printList()
+        if len(self.mainList) > 0:
+            if len(cmd) == 2:
+                check = self._indexCheck
+                iIn = eval(cmd[1])-1
+                if check(self.mainList, iIn):
+                    self.mainList.pop(iIn)
+                    if len(self.mainList) > 0:
+                        self.printList()
+                    else:
+                        print("You have deleted the entire list, please use sort.\n")
+                else:
+                    print("Cannot remove an item not in the list\n")
+            elif len(cmd) == 3:
+                check = self._indexCheckRaw
+                iIn1, iIn2 = eval(cmd[1]), eval(cmd[2])
+                if check(self.mainList, iIn1) and check(self.mainList, iIn2):
+                    if iIn1 > iIn2:
+                        iIn1, iIn2 = iIn2, iIn1
+                    list1 = self.mainList[0:iIn1-1]
+                    list2 = self.mainList[iIn2:len(self.mainList)]
+                    self.mainList = list1 + list2
+                    if len(self.mainList) > 0:
+                        self.printList()
+                    else:
+                        print("You have deleted the entire list, please use sort.\n")
+                else:
+                    print("Cannot remove elements not in the list.\n")
             else:
-                print("Number range for removal is incorrect err#5")
+                print("Incorrect number of parameter given for remove.\n")
+        else:
+            print("Must have a sorted list in order to remove elements from it.\n")
 
     def _renameList(self):
         #Rename files to a temp name to avoid conflicts
