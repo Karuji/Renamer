@@ -17,7 +17,7 @@ class RenamerFile(FileName):
         self._oldName  = string
         self.renamer = renamer
 
-    def randomUni(self):
+    def _randomUni(self):
         result = ''
         for i in range(16):
             result += chr(random.choice((0x300, 0x2000)) + random.randint(0, 0xff))
@@ -30,13 +30,12 @@ class RenamerFile(FileName):
         #print(self.string + "-->" + self.newName)
 
     def renameBuffer(self):
-        self.tempName = self._oldName + " --^^ " + self.file + ' ' + self.randomUni() + self.extention
+        self.tempName = self._oldName + " --^^ " + self.file + ' ' + self._randomUni() + self.extention
         try:
             os.rename(self.string, self.tempName)
             self.string = self.tempName
         except FileExistsError:
             remameBuffer()
-
 
     def renamePrint(self):
         """Functions like rename but prints the change from original filename to new."""
@@ -44,6 +43,7 @@ class RenamerFile(FileName):
         os.rename(self.tempName, self.newName)
         print(self._oldName + " --> " + self.newName)
 
+    # done with renamer.setName
     def setFileName(self, name, num):
         self.file = splitstring.stitch(name, self.file, num)
 
@@ -57,6 +57,7 @@ class Renamer(object):
     def restart(self):
         self.mainList     = []
         self.subList      = []
+        self.rmList       = []
         self.fill         = 0
         self.startNum     = 1
         self.toName       = ""
@@ -154,13 +155,13 @@ class Renamer(object):
 
     def insert(self, cmd):
         """Inserts the sublist into the selected place
-the sublist cannot be inserted into itself
+        the sublist cannot be inserted into itself
 
-If the insert position is an element element of the list than the first item of the sublist
-the first item of the sublist shall be at the insert position
+        If the insert position is an element element of the list than the first item of the sublist
+        the first item of the sublist shall be at the insert position
 
-If the insert position is an element greater than the last item of the sublist
-the last item of the sublist will be at the insert position."""
+        If the insert position is an element greater than the last item of the sublist
+        the last item of the sublist will be at the insert position."""
         if len(self.mainList) > 0:
             if len(cmd) == 2:
                 if len(self.subList) > 0:
@@ -312,6 +313,7 @@ the last item of the sublist will be at the insert position."""
     def sort(self):
         """Used to set the current directory to that in which the files shall be renamed."""
         self.mainList = []
+        self.rmList   = []
         dirList = os.listdir(os.getcwd())
         for i in dirList:
             if os.path.isfile(i):
@@ -326,13 +328,15 @@ the last item of the sublist will be at the insert position."""
 
     def remove(self, cmd):
         """If a single number is passed then that number is removed from the list
-        If two numbers are passed than the range of those numbers is removed from the list"""
+        If two numbers are passed than the range of those numbers is removed from the mainList
+        items removed from the mainList are added to a removed list to deal with potential name conflicts."""
         if len(self.mainList) > 0:
             if len(cmd) == 2:
                 check = self._indexCheck
                 iIn = eval(cmd[1])-1
                 if check(self.mainList, iIn):
-                    self.mainList.pop(iIn)
+                    # Remove item from the mainList and add it to the removed list.
+                    self.rmList.append(self.mainList.pop(iIn))
                     if len(self.mainList) > 0:
                         self.printList()
                     else:
@@ -345,8 +349,12 @@ the last item of the sublist will be at the insert position."""
                 if check(self.mainList, iIn1) and check(self.mainList, iIn2):
                     if iIn1 > iIn2:
                         iIn1, iIn2 = iIn2, iIn1
+                    # Split self.mainList into the sperate parts.
                     list1 = self.mainList[0:iIn1-1]
                     list2 = self.mainList[iIn2:len(self.mainList)]
+                    # Add the removed items to removed list.
+                    self.rmList.extend(self.mainList[iIn1-1:iIn2])
+                    # Create a new mainlist from the parts.
                     self.mainList = list1 + list2
                     if len(self.mainList) > 0:
                         self.printList()
@@ -359,18 +367,48 @@ the last item of the sublist will be at the insert position."""
         else:
             print("Must have a sorted list in order to remove elements from it.\n")
 
+    def _checkNames(self):
+        """Checks that none of the target files exist as their own files in the directory"""
+        targetNames = []
+        rmNames     = []
+        canRename   = True
+
+        for item in self.rmList:
+            rmNames.append(item.getName())
+
+        for item in self.mainList:
+            targetNames.append(item.getFileName() + item.getFileExt())
+
+        for name in targetNames:
+            if name in rmNames:
+                canRename = False
+                print('\"' + name + '\"' " is a file in the folder and a target name.")
+
+        return canRename
+
     def _renameList(self):
-        #Rename files to a temp name to avoid conflicts
+        """Does a check, and does multiple renames of fies to avoid conflicts."""
+        # Set the potential new file names.
         i = self.startNum
         for item in self.mainList:
             item.setFileName(self.toName, str(i).zfill(self.fill))
-            item.renameBuffer()
             i += 1
-        #Rename to final name showing change from original name
-        i = self.startNum
-        for item in self.mainList:
-            item.renamePrint()
-            i += 1
+        # Check that there are no conflicts between potential new names
+        # and other files in the directory.
+        if self._checkNames():
+            #Rename files to a temp name to avoid conflicts in self.mainList.
+            i = self.startNum
+            for item in self.mainList:
+                item.setFileName(self.toName, str(i).zfill(self.fill))
+                item.renameBuffer()
+                i += 1
+            #Rename to final name showing change from original name to final name.
+            i = self.startNum
+            for item in self.mainList:
+                item.renamePrint()
+                i += 1
+        else:
+            print("Resolve naming conflicts and then try again.")
 
     def rename(self):
         """Renames the files in the list to their new name."""
