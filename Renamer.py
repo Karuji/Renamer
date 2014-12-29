@@ -18,6 +18,7 @@ class RenamerFile(FileName):
         self.renamer = renamer
 
     def _randomUni(self):
+        """Generates a random unicode string."""
         result = ''
         for i in range(16):
             result += chr(random.choice((0x300, 0x2000)) + random.randint(0, 0xff))
@@ -30,6 +31,7 @@ class RenamerFile(FileName):
         #print(self.string + "-->" + self.newName)
 
     def renameBuffer(self):
+        """Performs an intermediate rename step so that there will be no internal conflict."""
         self.tempName = self._oldName + " --^^ " + self.file + ' ' + self._randomUni() + self.extention
         try:
             os.rename(self.string, self.tempName)
@@ -43,8 +45,9 @@ class RenamerFile(FileName):
         os.rename(self.tempName, self.newName)
         print(self._oldName + " --> " + self.newName)
 
-    # done with renamer.setName
+    # Done with renamer.setName
     def setFileName(self, name, num):
+        """Set the filename with appropriate parts for renaming."""
         self.file = splitstring.stitch(name, self.file, num)
 
             
@@ -55,6 +58,7 @@ class Renamer(object):
         self.restart()
 
     def restart(self):
+        """(Re)Start function to initialize — or reset — the class variables."""
         self.mainList     = []
         self.subList      = []
         self.rmList       = []
@@ -271,11 +275,11 @@ class Renamer(object):
         return str(self.startNum).zfill(self.fill)
 
     def setMode(self, cmd):
-        #Legacy from when prefix was a command
+        # Legacy from when prefix was a command
         pass
 
     def show(self, cmd):
-        """Shows aspects of the program depend on the command entered after show."""
+        """Shows aspects of the program depending on the command entered after show."""
         if len(self.mainList) > 0:
             if len(cmd) > 1:
                 if cmd[1] == "ext":
@@ -292,12 +296,13 @@ class Renamer(object):
             print("Must have a sorted list befor using show.")   
 
     def list(self, cmd):
+        """Lists aspects of the folder depending on the commands entered after list."""
         cmd[1] = cmd[1].lower()
         if(cmd[1] == 'folder'):
-            self.listFolder(cmd)
-            
+            self.listFolder(cmd)            
 
     def listFolder(self, cmd):
+        """Lists the files in the folder, optionally numbered."""
         if len(cmd) == 2:
             dirList = os.listdir(os.getcwd())
             for item in dirList:
@@ -368,7 +373,7 @@ class Renamer(object):
             print("Must have a sorted list in order to remove elements from it.\n")
 
     def _checkNames(self):
-        """Checks that none of the target files exist as their own files in the directory"""
+        """Checks that none of the target files exist as their own files in the directory."""
         targetNames = []
         rmNames     = []
         canRename   = True
@@ -396,13 +401,13 @@ class Renamer(object):
         # Check that there are no conflicts between potential new names
         # and other files in the directory.
         if self._checkNames():
-            #Rename files to a temp name to avoid conflicts in self.mainList.
+            # Rename files to a temp name to avoid conflicts in self.mainList.
             i = self.startNum
             for item in self.mainList:
                 item.setFileName(self.toName, str(i).zfill(self.fill))
                 item.renameBuffer()
                 i += 1
-            #Rename to final name showing change from original name to final name.
+            # Rename to final name showing change from original name to final name.
             i = self.startNum
             for item in self.mainList:
                 item.renamePrint()
@@ -412,7 +417,7 @@ class Renamer(object):
 
     def rename(self):
         """Renames the files in the list to their new name."""
-        #Need to update to deal with naming conflicts.
+        # Need to update to deal with naming conflicts.
         if len(self.mainList) > 0:
             self._renameList()
             self.restart()

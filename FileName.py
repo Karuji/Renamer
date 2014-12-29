@@ -44,3 +44,4 @@ class FileName(object):
             self.extention = self.string[-pos:]
         else:
             self.file = self.string
+            

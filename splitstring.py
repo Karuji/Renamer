@@ -1,4 +1,6 @@
 def stitch(toName, oldName, num):
+    """Function to allow the new name of the file to contain the number at an arbitrary position
+    or the old name of the file at an arbitrary position in the string of the new file name."""
     if len(toName) > 0:
         parts = []
         initialString = toName

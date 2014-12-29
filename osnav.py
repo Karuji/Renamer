@@ -36,6 +36,8 @@ def cd(string):
                 print(newPath + " is not a correct directory: err#4")
 
 def _cdParts(container, orig):
+    """Used for changing directories when the new directory path contain '..' in it as it
+    as '..' causes some weird results when relying on Python to handle it."""
     if container[0] == '..':
         container.pop(0)
         os.chdir(os.path.dirname(os.getcwd()))
