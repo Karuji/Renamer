@@ -19,7 +19,7 @@ def stitch(toName, oldName, num):
         # We look for them in toName which is the user's input.
         parts = []
         posNum = toName.find('*')
-        posName = toName.find('|')
+        posName = toName.find('<')
 
         # Check is the name or the num come first.
         # (Check in which order the points are.)
@@ -67,7 +67,7 @@ def stitch(toName, oldName, num):
             if part != ' ':
                 string += part
 
-        # This will only be true if first and second are 0 (there is no * and |)
+        # This will only be true if first and second are 0 (there is no * and <)
         # or one is the first character and the other does not exist.
         # Either way it causes an errant first character (either the first character or repeated symbol)                
         if first == second:
