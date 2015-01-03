@@ -54,9 +54,9 @@ def help(cmd):
                     print("Sets the name of the listed output with * being the position of the number")
                     print("It can be left blank if you want the list to simply be numbers")
                     print("If no * is placed then the number will be placed at the end without a space")
-                    print("% may be placed in the name to use the current name of the file")
+                    print("| may be placed in the name to use the current name of the file")
                     print("So if you wanted to prepend the current file with a number you can use:")
-                    print("\'set name * %\'\n")                    
+                    print("\'set name * |\'\n")                    
                 elif cmd[2] == 'start':
                     print("set start")
                     print("Sets the number at which the list will start the renaming")
