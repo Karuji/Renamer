@@ -64,8 +64,8 @@ def stitch(toName, oldName, num):
 
         # Congeal the parts into a usable string.
         for part in parts:
-            if part != ' ':
-                string += part
+            #if part != ' ':
+            string += part
 
         # This will only be true if first and second are 0 (there is no * and <)
         # or one is the first character and the other does not exist.
@@ -73,8 +73,9 @@ def stitch(toName, oldName, num):
         if first == second:
             string = string[1:]
 
-        # If no number place was given then we auto append one.
-        if posNum == -1:
+        # If no number place was given, and we aren't using the old name,
+        # then we auto append the number to the end of the name.        
+        if posNum == -1 and posName:
             string += num
     else:
         # If the user didn't enter a name we use the number as the new name.

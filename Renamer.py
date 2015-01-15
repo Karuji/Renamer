@@ -83,7 +83,7 @@ class Renamer(object):
         else:
             return True
 
-     def _checkZFill(self):
+    def _checkZFill(self):
         """Check the zfill so that it is correct when a new start number has been added."""
         # Value that will eventually be returned, if it is bigger than the fill.
         newFill = self.fill        
@@ -148,7 +148,7 @@ class Renamer(object):
             # Rename files to a temp name to avoid conflicts in self.mainList.
             i = self.startNum
             for item in self.mainList:
-                item.setFileName(self.toName, str(i).zfill(self.fill))
+                #item.setFileName(self.toName, str(i).zfill(self.fill))
                 item.renameBuffer()
                 i += 1
             # Rename to final name showing change from original name to final name.
