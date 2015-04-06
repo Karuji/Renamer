@@ -75,8 +75,8 @@ def stitch(toName, oldName, num):
 
         # If no number place was given, and we aren't using the old name,
         # then we auto append the number to the end of the name.        
-        if posNum == -1 and posName:
-            string += num
+        # if posNum == -1 and posName:
+        #     string += num
     else:
         # If the user didn't enter a name we use the number as the new name.
         string = num
