@@ -308,6 +308,19 @@ class Renamer(object):
         else:
             print("Must have a sorted list before using select.\n")
 
+    def multiple(self, cmd):
+        """Sets the file to have multiple numbers."""
+        if cmd[1].isnumeric():
+            if len(cmd) == 2:
+                # This will assume that the multiple is two.
+                pass
+            elif len(cmd) == 3:
+                # This is casting the multiple to have a size greater than 0.
+                # Setting a multiple to 1 will be allowed. Mul 1 is clearing to default.
+                pass
+        else:
+            print("Select an item to be a multiple.")
+
     def swap(self, cmd):
         """Swaps two items in the list."""
         if len(self.mainList) > 0:
@@ -464,6 +477,8 @@ class Renamer(object):
             self.select(cmd)
         elif cmd[0] == 'ins' or cmd[0] == 'insert':
             self.insert(cmd)
+        elif cmd[0] == 'mul' or cmd[0] == 'mult' or cmd[0] == 'multiple':
+            self.multiple(cmd)
         elif cmd[0] == 'swt' or cmd[0] == 'swp' or cmd[0] == 'swap':
             self.swap(cmd)
         elif cmd[0] == 'rm' or cmd[0] == 'remove':
