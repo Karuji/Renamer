@@ -16,6 +16,7 @@ class RenamerFile(FileName):
         self.tempName = ""
         self._oldName  = string
         self.renamer = renamer
+        self.mult    = 1
 
     def _randomUni(self):
         """Generates a random unicode string."""
@@ -47,7 +48,13 @@ class RenamerFile(FileName):
     def setFileName(self, name, num):
         """Set the filename with appropriate parts for renaming."""
         # Done with renamer.setName
-        self.file = splitstring.stitch(name, self.file, num)
+        self.file = splitstring.stitch(name, self.file, num, zfill)
+
+    def setMultiple(self, mult):
+        self.mult = mult
+
+    def getMultiple(self):
+        return self.mult
 
             
 class Renamer(object):
@@ -140,8 +147,8 @@ class Renamer(object):
         # Set the potential new file names.
         i = self.startNum
         for item in self.mainList:
-            item.setFileName(self.toName, str(i).zfill(self.fill))
-            i += 1
+            item.setFileName(self.toName, i, self.fill)
+            i += 1 + item.getMultiple -1
         # Check that there are no conflicts between potential new names
         # and other files in the directory.
         if self._checkNames():
@@ -150,12 +157,12 @@ class Renamer(object):
             for item in self.mainList:
                 #item.setFileName(self.toName, str(i).zfill(self.fill))
                 item.renameBuffer()
-                i += 1
+                i += 1 + item.getMultiple -1
             # Rename to final name showing change from original name to final name.
             i = self.startNum
             for item in self.mainList:
                 item.renamePrint()
-                i += 1
+                i += 1 + item.getMultiple -1
         else:
             print("Resolve naming conflicts and then try again.")
 
