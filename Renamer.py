@@ -45,18 +45,18 @@ class RenamerFile(FileName):
         os.rename(self.tempName, self.newName)
         print(self._oldName + " --> " + self.newName)
 
-    def setFileName(self, name, num):
+    def setFileName(self, name, num, zfill):
         """Set the filename with appropriate parts for renaming."""
         # Done with renamer.setName
-        self.file = splitstring.stitch(name, self.file, num, zfill)
+        self.file = splitstring.stitch(name, self.file, num, zfill, self.mult)
 
     def setMultiple(self, mult):
         self.mult = mult
 
     def getMultiple(self):
-        if mult < 1:
+        if self.mult < 1:
             return 1
-        return mult
+        return self.mult
             
 class Renamer(object):
     """Takes a directory and renames the files in that directory in an ordered manner."""
@@ -149,7 +149,7 @@ class Renamer(object):
         i = self.startNum
         for item in self.mainList:
             item.setFileName(self.toName, i, self.fill)
-            i += 1 + item.getMultiple -1
+            i += 1 + item.getMultiple() -1
         # Check that there are no conflicts between potential new names
         # and other files in the directory.
         if self._checkNames():
@@ -158,12 +158,12 @@ class Renamer(object):
             for item in self.mainList:
                 #item.setFileName(self.toName, str(i).zfill(self.fill))
                 item.renameBuffer()
-                i += 1 + item.getMultiple -1
+                i += 1 + item.getMultiple() -1
             # Rename to final name showing change from original name to final name.
             i = self.startNum
             for item in self.mainList:
                 item.renamePrint()
-                i += 1 + item.getMultiple -1
+                i += 1 + item.getMultiple() -1
         else:
             print("Resolve naming conflicts and then try again.")
 
@@ -318,16 +318,29 @@ class Renamer(object):
 
     def multiple(self, cmd):
         """Sets the file to have multiple numbers."""
-        if cmd[1].isnumeric():
-            if len(cmd) == 2:
-                # This will assume that the multiple is two.
-                pass
-            elif len(cmd) == 3:
-                # This is casting the multiple to have a size greater than 0.
-                # Setting a multiple to 1 will be allowed. Mul 1 is clearing to default.
-                pass
+        if len(cmd) > 1:
+            index = eval(cmd[1]) -1
+            if self._indexCheck(self.mainList, index):
+                if len(cmd) == 2:
+                    # This will assume that the multiple is two.
+                    self.mainList[index].setMultiple(2)
+                elif len(cmd) == 3:
+                    # This is casting the multiple to have a size greater than 0.
+                    # Setting a multiple to 1 will be allowed. Mul 1 is clearing to default.
+                    if cmd[2].isnumeric():
+                        mult = eval(cmd[2])
+                        if mult >= 0:
+                            self.mainList[index].setMultiple(mult)
+                        else:
+                            print("You cannot enter a multiple less than zero.")
+                    else:
+                        print("You must enter a number for multiple.")
+                else:
+                    print("You have entered an invalid number of commands.")
+            else:
+                print("The number you have entered is not a valid index range.")
         else:
-            print("Select an item to be a multiple.")
+            print("Please enter the item to be multple and the number of the multiple.")
 
     def swap(self, cmd):
         """Swaps two items in the list."""

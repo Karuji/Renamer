@@ -4,7 +4,7 @@ def stitch(toName, oldName, num, zfill = -1, mult=1):
     if zfill != -1:
         tempNum = str(num).zfill(zfill)
         if mult > 1:
-            for i in range(num, num + mult):
+            for i in range(num+1, num + mult):
                tempNum += ' & ' + str(i).zfill(zfill)
         num = tempNum
 
