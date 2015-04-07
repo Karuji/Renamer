@@ -1,11 +1,12 @@
-def stitch(toName, oldName, num, zfill, mult=1):
+def stitch(toName, oldName, num, zfill = -1, mult=1):
     """Function to allow the new name of the file to contain the number at an arbitrary position
     or the old name of the file at an arbitrary position in the string of the new file name."""
-    tempNum = str(num).zfill(zfill)
-    if mult > 1:
-        for i in range(num, num + mult):
-           tempNum += ' & ' + str(i).zfill(zfill)
-    num = tempNum
+    if zfill != -1:
+        tempNum = str(num).zfill(zfill)
+        if mult > 1:
+            for i in range(num, num + mult):
+               tempNum += ' & ' + str(i).zfill(zfill)
+        num = tempNum
 
     if len(toName) > 0:
 

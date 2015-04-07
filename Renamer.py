@@ -54,8 +54,9 @@ class RenamerFile(FileName):
         self.mult = mult
 
     def getMultiple(self):
-        return self.mult
-
+        if mult < 1:
+            return 1
+        return mult
             
 class Renamer(object):
     """Takes a directory and renames the files in that directory in an ordered manner."""
