@@ -11,7 +11,7 @@ def help(cmd):
         print("For a list of functions type help functions\n")        
     else:
         if cmd[1] == 'functions':
-            print("Renamer functions: \'cd\', \'dir\', \'exit\', \'ins\', \'lst\', \'rename\', \'reset\', \'rm\', \'sel\', \'set\', \'show\', \'srt\', \'swp\'")
+            print("Renamer functions: \'cd\', \'dir\', \'exit\', \'ins\', \'mul\', \'lst\', \'rename\', \'reset\', \'rm\', \'sel\', \'set\', \'show\', \'srt\', \'swp\'")
             print("Type help followed by the command")
             print("example help swp\n")            
         elif cmd[1] == 'swt' or cmd[1] == 'swp' or cmd[1] == 'swap':
@@ -42,7 +42,16 @@ def help(cmd):
             print("This is used by typing \'ins 7 1\' which which will insert the items from 7 into 1")
             print("and move items 1 through 6 to the next position in the list\n")
         elif cmd[1] == 'lst' or cmd[1] == 'list':
-            print("Prints the list to the command line\n")            
+            if len(cmd) == 2
+                print("List has a variety of subcommands.")
+                print("These are \'folder\'")
+                print("Type help set <subcommand> for the help on the topic\n")
+            else:
+                if cmd[2] == 'folder':
+                    print("list folder")
+                    print("Lists the current contents of the folder.")
+                    print("\'list folder numbered\' is also an option,")
+                    print("and will prefix the item with an incrementing number.\n")
         elif cmd[1] == 'set':
             if len(cmd) == 2:
                 print("Set has a variety of subcommands.")
@@ -113,6 +122,12 @@ def help(cmd):
                     print("Shows the current sublist selected by the \'ins\' command\n")
                 else:
                     print("Invalid set subcommand\n type\'help show\' for a list of subcommands\n")
+        elif cmd[1] == 'mul' or cmd[1] == 'mult' or cmd[1] == 'multiple':
+            print("mul, mult, or multiple")
+            print("Multiple assign an index to have multiple numbers.")
+            print("mul [index] [count] is the normal form for inputting.")
+            print("mul can be given with just the index which will assume a count of two.")
+            print("You can set a mul of 1 to remove previously set multiples.")
         else:
             print("Help request not recognized")
             print("type help functions")

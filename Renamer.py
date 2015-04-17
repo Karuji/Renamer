@@ -449,6 +449,7 @@ class Renamer(object):
             self.listFolder(cmd)            
 
     def listFolder(self, cmd):
+        #Update help function to include this
         """Lists the files in the folder, optionally numbered."""
         if len(cmd) == 2:
             dirList = os.listdir(os.getcwd())
@@ -461,6 +462,19 @@ class Renamer(object):
                 zfill = len(str(len(dirList)))
                 for i in range(len(dirList)):
                     print(str(i+1).zfill(zfill) + ': ' + dirList[i])
+
+    def write(self, cmd):
+        """Write a set of data to a text file in the current directory."""
+        if cmd[1].lower() == 'folder':
+            try:
+                name = os.getcwd()
+                dirList = os.listdir(os.getcwd())
+                txt = open(name, 'w')
+                for item in dirList:
+                    name.write("%s\n" % item)
+                name.close()
+            except IOError as e:
+                print("Not allowed:" , e)
 
     # Help commands.
     def help(self, cmd):
@@ -511,6 +525,8 @@ class Renamer(object):
             self.help(cmd)
         elif cmd[0] == 'lst' or cmd[0] == 'list':
             self.list(cmd)
+        elif cmd[0] == 'write':
+            self.write(cmd)
         # Navigational commands.
         elif cmd[0] == 'dir' or cmd[0] == 'ls':
             self.dir()
