@@ -42,7 +42,7 @@ def help(cmd):
             print("This is used by typing \'ins 7 1\' which which will insert the items from 7 into 1")
             print("and move items 1 through 6 to the next position in the list\n")
         elif cmd[1] == 'lst' or cmd[1] == 'list':
-            if len(cmd) == 2
+            if len(cmd) == 2:
                 print("List has a variety of subcommands.")
                 print("These are \'folder\'")
                 print("Type help set <subcommand> for the help on the topic\n")

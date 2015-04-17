@@ -467,12 +467,13 @@ class Renamer(object):
         """Write a set of data to a text file in the current directory."""
         if cmd[1].lower() == 'folder':
             try:
-                name = os.getcwd()
+                name = os.path.basename(os.path.normpath(os.getcwd()))
                 dirList = os.listdir(os.getcwd())
-                txt = open(name, 'w')
+                txt = open(name+'.txt', 'w')
                 for item in dirList:
-                    name.write("%s\n" % item)
-                name.close()
+                    txt.write("%s\n" % item)
+                txt.close()
+                print(name+'.txt has been saved.')
             except IOError as e:
                 print("Not allowed:" , e)
 
